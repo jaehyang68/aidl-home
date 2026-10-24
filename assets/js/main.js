@@ -145,26 +145,33 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     'AI로 일이 쉬워지는 방법, 최재향 대표님과 함께 배워 보세요.',
     '강의 문의는 아래 버튼을 눌러 주세요. 감사합니다!'
   ];
-  let voices = [], on = false, token = 0;
-  const loadVoices = () => { voices = speechSynthesis.getVoices(); };
-  loadVoices(); speechSynthesis.addEventListener && speechSynthesis.addEventListener('voiceschanged', loadVoices);
-  const pick = () => voices.find(v => /^ko/i.test(v.lang) && /google|natural|online|sun|hye|seo/i.test(v.name)) || voices.find(v => /^ko/i.test(v.lang));
+  let voices = [], on = false, token = 0, v0 = null;
+  const loadVoices = () => { try { voices = speechSynthesis.getVoices() || []; } catch (e) { voices = []; } };
+  loadVoices();
+  if (speechSynthesis.addEventListener) speechSynthesis.addEventListener('voiceschanged', loadVoices);
+  setTimeout(loadVoices, 500); setTimeout(loadVoices, 1500);   // 모바일은 음성 목록이 늦게 올라옵니다
+  const pick = () => voices.find(v => /^ko/i.test(v.lang) && /google|natural|online|sun|hye|seo|yuna/i.test(v.name)) || voices.find(v => /^ko[-_]?/i.test(v.lang));
   const finish = () => { on = false; document.body.dataset.speaking = '0'; stage.classList.remove('speaking'); btn.innerHTML = label(false); };
-  function stop() { token++; speechSynthesis.cancel(); finish(); }
+  function stop() { token++; try { speechSynthesis.cancel(); } catch (e) {} finish(); }
+  function say(i, my) {
+    if (my !== token) return;
+    if (i >= LINES.length) { finish(); return; }
+    const u = new SpeechSynthesisUtterance(LINES[i]); bubble.textContent = LINES[i];
+    u.lang = 'ko-KR'; if (v0) u.voice = v0; u.rate = .98; u.pitch = 1; u.volume = 1;
+    let moved = false; const go = () => { if (moved) return; moved = true; setTimeout(() => say(i + 1, my), 200); };
+    u.onend = go; u.onerror = (e) => { if (my !== token) return; if (e && (e.error === 'canceled' || e.error === 'interrupted')) return; finish(); };
+    speechSynthesis.speak(u);
+    // 일부 모바일 브라우저는 onend를 보내지 않아 안전장치를 둡니다
+    setTimeout(go, 1500 + LINES[i].length * 260);
+  }
   function speak() {
-    loadVoices();
+    // iOS/안드로이드는 '버튼을 누른 그 순간'에 바로 말하기를 시작해야 소리가 납니다 → 지연(setTimeout) 없이 호출
+    loadVoices(); v0 = pick();
+    if (speechSynthesis.speaking || speechSynthesis.pending) speechSynthesis.cancel();
+    try { speechSynthesis.resume(); } catch (e) {}
     on = true; const my = ++token; document.body.dataset.speaking = '1'; stage.classList.add('speaking'); btn.innerHTML = label(true);
-    const v = pick(); if (!v) note.textContent = '이 기기에는 한국어 음성이 없어 소리가 어색하거나 나지 않을 수 있어요. 휴대폰·크롬에서는 대부분 잘 나옵니다.';
-    let i = 0;
-    const next = () => {
-      if (my !== token) return;
-      if (i >= LINES.length) { finish(); return; }
-      const u = new SpeechSynthesisUtterance(LINES[i]); bubble.textContent = LINES[i];
-      u.lang = 'ko-KR'; if (v) u.voice = v; u.rate = .97; u.pitch = .85; u.volume = 1;
-      u.onend = () => { i++; setTimeout(next, 250); }; u.onerror = () => { if (my === token) finish(); };
-      speechSynthesis.speak(u);
-    };
-    speechSynthesis.cancel(); setTimeout(next, 80);
+    if (!v0) note.textContent = '이 기기에 한국어 음성이 없을 수 있어요. 휴대폰 설정 → 음성(텍스트 읽기)에서 한국어 음성을 설치하면 들립니다.';
+    say(0, my);
   }
   btn.addEventListener('click', () => (on ? stop() : speak()));
   document.addEventListener('visibilitychange', () => { if (document.hidden && on) stop(); });
@@ -354,4 +361,26 @@ $$('[data-video]').forEach(box => {
     var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){var id=en.target.id;say(id==='home'?'hero':id)}})},{rootMargin:'-40% 0px -50% 0px'});
     secs.forEach(function(e){io.observe(e)});
   }
+})();
+
+/* ===== 로봇 크기·위치 조절 + 버튼 클릭이 로봇 장면에 전달되지 않게 ===== */
+(function(){
+  var st=document.getElementById('stage'),ctl=document.getElementById('zoomCtl'),btn=document.getElementById('speakBtn');
+  if(!st)return;
+  ['pointerdown','mousedown','touchstart','click'].forEach(function(ev){
+    [ctl,btn].forEach(function(el){el&&el.addEventListener(ev,function(e){e.stopPropagation()},{passive:true})});
+  });
+  var cs=getComputedStyle(st),base={rs:parseFloat(cs.getPropertyValue('--rs'))||1.9,ty:parseFloat(cs.getPropertyValue('--ty'))||48};
+  var rs=base.rs,ty=base.ty;
+  function apply(){st.style.setProperty('--rs',rs.toFixed(2));st.style.setProperty('--ty',ty.toFixed(1))}
+  addEventListener('resize',function(){if(rs===base.rs&&ty===base.ty){st.style.removeProperty('--rs');st.style.removeProperty('--ty');cs=getComputedStyle(st);base={rs:parseFloat(cs.getPropertyValue('--rs'))||1.9,ty:parseFloat(cs.getPropertyValue('--ty'))||48};rs=base.rs;ty=base.ty}});
+  ctl&&ctl.addEventListener('click',function(e){
+    var b=e.target.closest('button');if(!b)return;var z=b.dataset.z;
+    if(z==='in')rs=Math.min(4.5,rs+.3);
+    if(z==='out')rs=Math.max(1,rs-.3);
+    if(z==='up')ty=Math.max(10,ty-5);
+    if(z==='down')ty=Math.min(90,ty+5);
+    if(z==='reset'){rs=base.rs;ty=base.ty}
+    apply();
+  });
 })();
