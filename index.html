@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>인공지능디지털연구소 AIDL | 최재향 AI 강사 · AI 업무혁신·AI 영상·바이브코딩 강의</title>
+<meta name="description" content="인공지능디지털연구소 최재향 대표 — AI 활용 업무효율화·업무자동화, 홍보 콘텐츠 제작, 에이전트 바이브코딩 웹앱, AI 영상·영화, 책쓰기·출판, AI 자격증까지. 공공기관·기업·학교·농업기술센터 맞춤 강의 문의.">
+<meta name="theme-color" content="#0F172A">
+<link rel="icon" href="assets/img/favicon.png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="배우는 AI에서, 해내는 AI로 | 인공지능디지털연구소 최재향">
+<meta property="og:description" content="교육이 끝나면 결과물이 남습니다. 공공기관·기업·학교 맞춤 AI 실습 강의 문의.">
+<meta property="og:image" content="assets/img/hero-poster.jpg">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"Organization","name":"인공지능디지털연구소(AIDL)","url":"https://aidl.kr","logo":"assets/img/logo.png","email":"80284@naver.com","telephone":"+82-10-3420-2083","founder":{"@type":"Person","name":"최재향"}},
+{"@type":"Person","name":"최재향","jobTitle":"인공지능디지털연구소 대표 · AI 강사 · AI 영화감독","worksFor":{"@type":"Organization","name":"인공지능디지털연구소(AIDL)"},"sameAs":["https://blog.naver.com/80284","https://litt.ly/jaehyang"]}
+]}
+</script>
+</head>
+<body id="top">
+
+<!-- 아이콘 스프라이트 -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+<symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a2 2 0 0 1-2.06 0L2 7"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+<symbol id="i-up-right" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></symbol>
+<symbol id="i-vol" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></symbol>
+<symbol id="i-mute" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="m23 9-6 6M17 9l6 6"/></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+<symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id="i-award" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+<symbol id="i-film" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2.2"/><path d="M7 2v20M17 2v20M2 12h20M2 7h5M2 17h5M17 17h5M17 7h5"/></symbol>
+<symbol id="i-code" viewBox="0 0 24 24"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+<symbol id="i-brief" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+<symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4M10 9H8M16 13H8M16 17H8"/></symbol>
+<symbol id="i-leaf" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></symbol>
+<symbol id="i-school" viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></symbol>
+<symbol id="i-store" viewBox="0 0 24 24"><path d="m2 7 1.5-4h17L22 7M2 7h20M2 7v1a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0V7M4 11v10h16V11"/></symbol>
+<symbol id="i-cert" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M7 8h10M7 12h5M9 17l-1 5 4-2 4 2-1-5"/></symbol>
+<symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+<symbol id="i-yt" viewBox="0 0 24 24"><path d="M2.5 17a24.1 24.1 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.6 49.6 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.1 24.1 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.6 49.6 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></symbol>
+<symbol id="i-pen" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+<symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></symbol>
+</svg>
+
+<a class="sr" href="#main">본문 바로가기</a>
+
+<!-- ======================== 헤더 ======================== -->
+<header class="hdr">
+  <div class="wrap">
+    <a class="brand" href="#home" aria-label="인공지능디지털연구소 홈">
+      <img src="assets/img/logo.png" alt="인공지능디지털연구소 로고" width="42" height="42">
+      <span><b>인공지능디지털연구소</b><small>AIDL · CHOI JAEHYANG</small></span>
+    </a>
+    <nav class="nav" id="nav" aria-label="주요 메뉴">
+      <a href="#home" data-s="home">HOME</a>
+      <a href="#about" data-s="about">ABOUT 최재향</a>
+      <a href="#programs" data-s="programs">AI교육프로그램</a>
+      <a href="#result5" data-s="result5">JH RESULT 5</a>
+      <a href="#cases" data-s="cases">교육 사례</a>
+      <a href="#lab" data-s="lab">AI LAB</a>
+      <a href="#movie" data-s="movie">AI 영상·영화</a>
+      <a href="#media" data-s="media">MEDIA</a>
+      <a href="#contact" data-s="contact" class="cta">강의 문의</a>
+    </nav>
+    <button class="burger" id="burger" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="nav"><svg class="i"><use href="#i-menu"/></svg></button>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ======================== HOME · 히어로 ======================== -->
+<section class="hero" id="home" aria-label="최재향 대표 인사 영상">
+  <div class="hero-media" id="heroMedia" title="화면을 누르면 영상 재생·일시정지">
+    <video id="heroVideo" autoplay muted loop playsinline preload="auto" poster="assets/img/hero-poster.jpg" aria-label="최재향 대표 인사 영상">
+      <source src="assets/video/hero.mp4" type="video/mp4">
+    </video>
+    <div class="vctl">
+      <button type="button" id="pauseBtn" aria-label="영상 일시정지"><svg class="i"><use href="#i-pause"/></svg><span>영상 멈춤</span></button>
+      <button type="button" id="soundBtn" aria-label="소리 켜기"><svg class="i"><use href="#i-mute"/></svg><span>소리 켜기</span></button>
+    </div>
+  </div>
+  <div class="wrap hero-inner">
+    <div class="hero-copy">
+      <span class="badge"><i></i>인공지능디지털연구소 대표 · AI 강사 최재향</span>
+      <h1>배우는 AI에서,<br><span class="hl">해내는 AI로.</span></h1>
+      <p class="sub">교육이 끝나면 결과물이 남습니다.</p>
+      <p class="desc">AI 업무효율화·자동화부터 홍보 콘텐츠, AI 영상, 바이브코딩 웹앱, 책쓰기·출판, AI 자격증까지. 공공기관·기업·학교·농업기술센터에 맞춘 실습형 강의를 전국에서 진행합니다.</p>
+      <div class="cta-row">
+        <a class="btn primary" href="#contact">우리 기관 맞춤 강의 문의하기 <svg class="i"><use href="#i-arrow"/></svg></a>
+        <a class="btn ghost" href="#movie">포트폴리오 보기</a>
+      </div>
+      <div class="hero-tags"><span>전국 출강</span><span>기관 맞춤 커리큘럼</span><span>실습·결과물 중심</span></div>
+    </div>
+  </div>
+  <div class="stats" aria-label="신뢰 지표">
+    <div class="wrap">
+      <div class="stat"><b><span data-count="11">11</span><em>권+</em></b><span>저서</span></div>
+      <div class="stat"><b><span data-count="6">6</span><em>회</em></b><span>국내외 AI 영화제·경진대회 수상</span></div>
+      <div class="stat"><b><span data-count="3">3</span><em>년차</em></b><span>AI 현장 강의</span></div>
+      <div class="stat"><b>전국</b><span>공공기관·기업·학교·농업기술센터</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 마퀴 -->
+<div class="marquee" aria-hidden="true"><div class="track">
+  <span>공공기관</span><span>기업</span><span>학교</span><span>농업기술센터</span><span>소상공인</span><span>협회·단체</span><span>시니어</span><span>예비 작가</span>
+  <span>공공기관</span><span>기업</span><span>학교</span><span>농업기술센터</span><span>소상공인</span><span>협회·단체</span><span>시니어</span><span>예비 작가</span>
+</div></div>
+
+<!-- ======================== 로봇 섹션 ======================== -->
+<section class="sec robot" id="robot" aria-labelledby="robotTitle">
+  <div class="wrap robot-grid">
+    <div class="stage rv" id="stage">
+      <span class="pill"><i></i>NEXBOT · 마우스로 움직여 보세요</span>
+      <div class="fb" aria-hidden="true">
+        <!-- 3D가 불러와지기 전·불러오지 못할 때 보이는 인사 로봇 -->
+        <svg class="nex" viewBox="0 0 300 370" role="img" aria-label="손을 흔드는 로봇 NEXBOT">
+          <defs>
+            <linearGradient id="gB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2b3550"/><stop offset="1" stop-color="#0b1020"/></linearGradient>
+            <linearGradient id="gV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#101a33"/><stop offset="1" stop-color="#050912"/></linearGradient>
+          </defs>
+          <ellipse cx="150" cy="352" rx="78" ry="9" fill="#0f172a" opacity=".18"/>
+          <line x1="150" y1="30" x2="150" y2="54" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="150" cy="24" r="9" fill="#2563EB"><animate attributeName="opacity" values="1;.35;1" dur="1.6s" repeatCount="indefinite"/></circle>
+          <rect x="94" y="52" width="112" height="90" rx="36" fill="url(#gB)"/>
+          <rect x="106" y="68" width="88" height="52" rx="24" fill="url(#gV)"/>
+          <ellipse class="eye" cx="131" cy="92" rx="9" ry="11" fill="#38bdf8"/>
+          <ellipse class="eye" cx="169" cy="92" rx="9" ry="11" fill="#38bdf8"/>
+          <path d="M138 108q12 9 24 0" stroke="#38bdf8" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <circle cx="92" cy="98" r="9" fill="#2563EB"/><circle cx="208" cy="98" r="9" fill="#2563EB"/>
+          <rect x="138" y="142" width="24" height="14" rx="5" fill="#0b1020"/>
+          <rect x="96" y="152" width="108" height="118" rx="34" fill="url(#gB)"/>
+          <rect x="124" y="180" width="52" height="40" rx="12" fill="url(#gV)"/>
+          <text x="150" y="207" text-anchor="middle" font-family="Pretendard,sans-serif" font-weight="800" font-size="20" fill="#38bdf8">AI</text>
+          <circle cx="132" cy="240" r="4" fill="#10B981"/><circle cx="150" cy="240" r="4" fill="#FFE17C"/><circle cx="168" cy="240" r="4" fill="#2563EB"/>
+          <rect x="62" y="160" width="30" height="96" rx="15" fill="#0b1020"/><circle cx="77" cy="262" r="16" fill="#2563EB"/>
+          <g class="arm-r"><rect x="208" y="160" width="30" height="96" rx="15" fill="#0b1020"/><circle cx="223" cy="262" r="16" fill="#2563EB"/></g>
+          <rect x="114" y="264" width="32" height="72" rx="14" fill="#0b1020"/><rect x="154" y="264" width="32" height="72" rx="14" fill="#0b1020"/>
+          <ellipse cx="130" cy="340" rx="24" ry="11" fill="#2563EB"/><ellipse cx="170" cy="340" rx="24" ry="11" fill="#2563EB"/>
+        </svg>
+      </div>
+      <!-- 3D 로봇 (Spline) : assets/js/main.js 가 화면에 가까워지면 불러옵니다 -->
+      <spline-viewer id="robot" loading-anim-type="none" events-target="global"></spline-viewer>
+      <p class="stat-msg" id="robotMsg">3D 로봇을 불러오는 중…</p>
+    </div>
+    <div class="rv">
+      <div class="bubble" id="bubble" aria-live="polite"></div>
+      <h2 class="h2" id="robotTitle">AI가 만든 로봇이<br>먼저 인사드립니다</h2>
+      <p class="lead">강의에서는 이런 3D 로봇·영상·웹앱을 코딩 없이 직접 만들어 보는 실습까지 함께합니다. 어렵지 않아요. 따라 하다 보면 내 결과물이 완성됩니다.</p>
+      <div class="chips"><span class="chip">AI 업무효율화</span><span class="chip">바이브코딩 웹앱</span><span class="chip">AI 홍보영상</span><span class="chip">AI 영화 제작</span><span class="chip">책쓰기·출판</span></div>
+      <a class="btn yellow" href="#contact">우리 기관 강의 문의하기 <svg class="i"><use href="#i-arrow"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- 문제 공감 -->
+<section class="sec" aria-labelledby="painT">
+  <div class="wrap">
+    <div class="sec-head c rv"><span class="eyebrow">WHY AIDL</span><h2 class="h2" id="painT">AI 교육, 듣고 끝나지 않으셨나요?</h2><p class="lead">교육 담당자님의 가장 큰 고민을 먼저 해결합니다.</p></div>
+    <div class="pain">
+      <article class="card rv"><span class="num">01</span><h3>결과물이 남지 않아요</h3><p>들을 땐 신기한데, 돌아서면 손에 남는 게 없는 교육. 저는 강의 시간 안에 내 업무 결과물을 완성합니다.</p></article>
+      <article class="card rv"><span class="num">02</span><h3>현업과 동떨어져 있어요</h3><p>예시가 우리 일과 달라 적용이 안 되는 교육. 기관 업무와 실제 업무 폴더를 기준으로 커리큘럼을 맞춥니다.</p></article>
+      <article class="card rv"><span class="num">03</span><h3>수강생 수준 차이가 커요</h3><p>쉬운 설명과 단계별 실습으로 처음이신 분도 끝까지 따라올 수 있게, 코딩이나 어려운 용어 없이 진행합니다.</p></article>
+    </div>
+    <div class="solve rv"><p>배우는 AI에서, 해내는 AI로. 그 변화를 이끄는 방법이 <span class="hl">JH RESULT 5™</span> 입니다.</p><a class="btn yellow" href="#result5">방법론 보기 <svg class="i"><use href="#i-arrow"/></svg></a></div>
+  </div>
+</section>
+
+<!-- ======================== ABOUT ======================== -->
+<section class="sec alt" id="about" aria-labelledby="aboutT">
+  <div class="wrap about">
+    <div class="portrait rv">
+      <div class="ph"><img src="assets/img/profile.jpg" alt="인공지능디지털연구소 최재향 대표 프로필 사진" loading="lazy" width="1000" height="1500"></div>
+      <div class="nameplate"><small>AI 강사 · AI 영화감독</small><b>최재향 대표</b></div>
+    </div>
+    <div class="rv">
+      <span class="eyebrow">ABOUT 최재향</span>
+      <h2 class="h2" id="aboutT">현장의 고민을 실습으로<br>풀어내는 AI 강사</h2>
+      <p class="lead">인공지능디지털연구소(AIDL) 대표. 전국의 공공기관·기업·학교·농업기술센터를 다니며 AI 업무혁신과 콘텐츠 제작을 가르치고, 직접 AI 영화와 영상을 만드는 현역 창작자입니다.</p>
+      <ul class="cred">
+        <li><svg class="i"><use href="#i-users"/></svg><span><b>DIRECTOR · LECTURER</b>한국AI리터러시강사협회 충북지회장</span></li>
+        <li><svg class="i"><use href="#i-film"/></svg><span><b>DIRECTOR</b>한국AI영상제작협회 이사</span></li>
+        <li><svg class="i"><use href="#i-school"/></svg><span><b>RESEARCHER</b>디지털융합교육연구원 수석연구원(겸임)</span></li>
+        <li><svg class="i"><use href="#i-pen"/></svg><span><b>AUTHOR</b>저서 11권 이상 · AI교육투데이 칼럼 필자</span></li>
+        <li><svg class="i"><use href="#i-award"/></svg><span><b>AWARDS</b>국내외 AI 영화제·경진대회 수상 6건 (2024.06 ~ 2025.06)</span></li>
+      </ul>
+      <p class="philo">기술을 넘어 현장으로, 생각을 넘어 창작으로 — AI로 여는 실무 생산성과 창의적 혁신</p>
+      <div class="links">
+        <a class="btn sm" href="https://blog.naver.com/80284" target="_blank" rel="noopener">네이버 블로그 <svg class="i"><use href="#i-up-right"/></svg></a>
+        <a class="btn sm" href="https://www.youtube.com/@인공지능디지털연구소" target="_blank" rel="noopener">YouTube <svg class="i"><use href="#i-up-right"/></svg></a>
+        <a class="btn sm" href="https://litt.ly/jaehyang" target="_blank" rel="noopener">litt.ly <svg class="i"><use href="#i-up-right"/></svg></a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:clamp(40px,6vw,72px)">
+    <div class="vbox rv" data-video>
+      <video preload="none" playsinline poster="assets/img/intro-poster.jpg" aria-label="최재향 AI 강사 소개 영상"><source src="assets/video/intro.mp4" type="video/mp4"></video>
+      <button class="play" type="button" aria-label="소개 영상 재생"><span><svg class="i f"><use href="#i-play"/></svg>소개 영상 보기 · 1분 16초</span></button>
+    </div>
+    <p class="vcap"><svg class="i" style="color:var(--cobalt)"><use href="#i-film"/></svg>최재향 AI 강사 소개 — 어떤 교육을, 누구와, 어떻게 만드는지 1분 안에 확인하세요.</p>
+  </div>
+</section>
+
+<!-- ======================== 프로그램 ======================== -->
+<section class="sec" id="programs" aria-labelledby="progT">
+  <div class="wrap">
+    <div class="sec-head rv"><span class="eyebrow">AI EDUCATION</span><h2 class="h2" id="progT">AI 교육 프로그램</h2><p class="lead">시그니처 3과정을 기본으로, 기관·대상·시간에 맞춰 커리큘럼을 맞춤 설계합니다. 반나절 특강부터 종일 실습까지 일정에 맞춰 조정합니다.</p></div>
+    <div class="filters rv" role="group" aria-label="프로그램 필터">
+      <button type="button" data-f="all" aria-pressed="true">전체</button>
+      <button type="button" data-f="sig" aria-pressed="false">시그니처</button>
+      <button type="button" data-f="cus" aria-pressed="false">대상별 맞춤</button>
+      <button type="button" data-f="pub" aria-pressed="false">책쓰기·자격증</button>
+    </div>
+    <div class="grid-p" id="progGrid">
+      <article class="card hov prog sig rv" data-g="sig"><div class="top"><span class="ic"><svg class="i"><use href="#i-zap"/></svg></span><span class="tag">SIGNATURE</span></div>
+        <h3>AI 업무혁신 MASTER</h3><p class="one">보고서·기획서·회의록, AI와 반나절이면 끝.</p>
+        <dl><dt>대상</dt><dd>공공기관·기업 실무자</dd><dt>산출물</dt><dd>내 업무용 프롬프트 세트, 반복업무 자동화 템플릿</dd></dl>
+        <button class="btn sm primary" data-course="AI 업무혁신 MASTER">이 과정으로 문의하기</button></article>
+      <article class="card hov prog sig rv" data-g="sig"><div class="top"><span class="ic"><svg class="i"><use href="#i-sparkle"/></svg></span><span class="tag">SIGNATURE</span></div>
+        <h3>AI CONTENT STUDIO</h3><p class="one">카드뉴스·블로그·숏폼·홍보영상까지 우리 기관 콘텐츠를 직접 제작.</p>
+        <dl><dt>대상</dt><dd>홍보·마케팅 담당자, 소상공인</dd><dt>산출물</dt><dd>우리 기관 홍보 콘텐츠 세트</dd></dl>
+        <button class="btn sm primary" data-course="AI CONTENT STUDIO">이 과정으로 문의하기</button></article>
+      <article class="card hov prog sig rv" data-g="sig"><div class="top"><span class="ic"><svg class="i"><use href="#i-film"/></svg></span><span class="tag">SIGNATURE</span></div>
+        <h3>AI MOVIE STUDIO</h3><p class="one">기획부터 이미지·영상·편집까지, AI 영화감독의 제작 노하우.</p>
+        <dl><dt>대상</dt><dd>영상 제작 입문자, 홍보 담당자</dd><dt>산출물</dt><dd>AI 홍보영상·숏폼·단편 영상 1편</dd></dl>
+        <button class="btn sm primary" data-course="AI MOVIE STUDIO">이 과정으로 문의하기</button></article>
+
+      <article class="card hov prog rv" data-g="cus"><div class="top"><span class="ic"><svg class="i"><use href="#i-brief"/></svg></span><span class="tag b">맞춤</span></div>
+        <h3>공공기관 AI 업무혁신</h3><p class="one">공문·보고·민원 응대 등 공공 업무에 맞춘 생성형 AI 활용.</p>
+        <dl><dt>대상</dt><dd>공공기관 공무원·직원</dd><dt>산출물</dt><dd>부서별 업무 AI 활용 시나리오</dd></dl>
+        <button class="btn sm primary" data-course="공공기관 AI 업무혁신">이 과정으로 문의하기</button></article>
+      <article class="card hov prog rv" data-g="cus"><div class="top"><span class="ic"><svg class="i"><use href="#i-leaf"/></svg></span><span class="tag b">맞춤</span></div>
+        <h3>농업인 AI 스마트마케팅</h3><p class="one">농산물 상세페이지·SNS·홍보영상을 AI로 직접 만들고 판매까지.</p>
+        <dl><dt>대상</dt><dd>농업인, 농업기술센터 교육생</dd><dt>산출물</dt><dd>농산물 홍보 이미지·영상·상세페이지</dd></dl>
+        <button class="btn sm primary" data-course="농업인 AI 스마트마케팅">이 과정으로 문의하기</button></article>
+      <article class="card hov prog rv" data-g="cus"><div class="top"><span class="ic"><svg class="i"><use href="#i-school"/></svg></span><span class="tag b">맞춤</span></div>
+        <h3>교직원 생성형 AI</h3><p class="one">수업 자료·학부모 안내·행정 업무에 바로 쓰는 생성형 AI.</p>
+        <dl><dt>대상</dt><dd>교사·교직원</dd><dt>산출물</dt><dd>수업·행정용 AI 활용 자료</dd></dl>
+        <button class="btn sm primary" data-course="교직원 생성형 AI">이 과정으로 문의하기</button></article>
+      <article class="card hov prog rv" data-g="cus"><div class="top"><span class="ic"><svg class="i"><use href="#i-store"/></svg></span><span class="tag b">맞춤</span></div>
+        <h3>소상공인 AI 콘텐츠 마케팅</h3><p class="one">매장·제품 홍보 콘텐츠를 혼자서도 만들 수 있도록 단계별 실습.</p>
+        <dl><dt>대상</dt><dd>소상공인·자영업자</dd><dt>산출물</dt><dd>홍보 이미지·영상·SNS 게시물</dd></dl>
+        <button class="btn sm primary" data-course="소상공인 AI 콘텐츠 마케팅">이 과정으로 문의하기</button></article>
+      <article class="card hov prog rv" data-g="cus"><div class="top"><span class="ic"><svg class="i"><use href="#i-code"/></svg></span><span class="tag b">맞춤</span></div>
+        <h3>바이브코딩 웹앱 실전교육</h3><p class="one">코딩 없이 AI 에이전트와 대화하며 반응형 웹앱을 하루에 완성.</p>
+        <dl><dt>대상</dt><dd>비개발자, 사업자, 기관 담당자</dd><dt>산출물</dt><dd>내 웹앱·홈페이지 + 문의폼 + 배포</dd></dl>
+        <button class="btn sm primary" data-course="바이브코딩 웹앱">이 과정으로 문의하기</button></article>
+
+      <article class="card hov prog rv" data-g="pub"><div class="top"><span class="ic"><svg class="i"><use href="#i-book"/></svg></span><span class="tag g">책쓰기</span></div>
+        <h3>AI 책쓰기·책출판</h3><p class="one">저서 11권+ 경험을 바탕으로, AI와 함께 내 책의 목차부터 출간까지.</p>
+        <dl><dt>대상</dt><dd>예비 작가, 전문가, 강사</dd><dt>산출물</dt><dd>목차·원고 초안·출간 로드맵</dd></dl>
+        <button class="btn sm primary" data-course="AI 책쓰기·출판">이 과정으로 문의하기</button></article>
+      <article class="card hov prog rv" data-g="pub"><div class="top"><span class="ic"><svg class="i"><use href="#i-cert"/></svg></span><span class="tag g">자격증</span></div>
+        <h3>AI 자격증 과정</h3><p class="one">교육 이수 후 AI 활용 역량을 증명하는 자격증을 발행합니다.</p>
+        <dl><dt>대상</dt><dd>강사 양성·역량 인증이 필요한 분</dd><dt>안내</dt><dd>자격 종류·발급 절차는 상담 시 자세히 안내</dd></dl>
+        <button class="btn sm primary" data-course="AI 자격증">이 과정으로 문의하기</button></article>
+      <article class="card prog cta-card rv" data-g="cta"><span class="tag" style="align-self:flex-start">CUSTOM</span><h3>찾는 과정이 없으신가요?</h3><p class="one">기관의 업무와 수강 대상에 맞춰 커리큘럼을 처음부터 함께 설계해 드립니다. 대상·인원·시간만 알려주세요.</p><a class="btn yellow" href="#contact">맞춤 과정 상담하기 <svg class="i"><use href="#i-arrow"/></svg></a></article>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== JH RESULT 5 ======================== -->
+<section class="sec dark" id="result5" aria-labelledby="r5T">
+  <div class="wrap">
+    <div class="sec-head c rv"><span class="eyebrow">METHOD</span><h2 class="h2" id="r5T">JH RESULT 5™ — 결과가 남는 5단계</h2><p class="lead">모든 강의는 이 5단계로 설계됩니다. 단계를 눌러 확인해 보세요.</p></div>
+    <div class="steps-tab rv" role="tablist" aria-label="JH RESULT 5 단계">
+      <button role="tab" aria-selected="true" data-i="0"><small>STEP 1</small><b>DEFINE</b><span>업무 정의</span></button>
+      <button role="tab" aria-selected="false" data-i="1"><small>STEP 2</small><b>DESIGN</b><span>AI 업무흐름 설계</span></button>
+      <button role="tab" aria-selected="false" data-i="2"><small>STEP 3</small><b>CREATE</b><span>결과물 제작</span></button>
+      <button role="tab" aria-selected="false" data-i="3"><small>STEP 4</small><b>AUTOMATE</b><span>반복업무 자동화</span></button>
+      <button role="tab" aria-selected="false" data-i="4"><small>STEP 5</small><b>AMPLIFY</b><span>성과 확산</span></button>
+    </div>
+    <div class="prog-bar" aria-hidden="true"><i id="r5Bar"></i></div>
+    <div class="step-panel rv" id="r5Panel" aria-live="polite">
+      <div><h3 id="r5H"></h3><p id="r5P"></p></div>
+      <div class="out"><h4>산출물 예시</h4><ul id="r5L"></ul></div>
+    </div>
+    <p class="steps-hint">키보드 ← → 방향키, 모바일은 좌우로 밀어서도 이동할 수 있습니다.</p>
+  </div>
+</section>
+
+<!-- ======================== 교육 사례 ======================== -->
+<section class="sec" id="cases" aria-labelledby="caseT">
+  <div class="wrap">
+    <div class="sec-head rv"><span class="eyebrow">FIELD CASES</span><h2 class="h2" id="caseT">사진으로 만나는 생생한 현장</h2><p class="lead">실제 강의 현장과 교육 소개 이미지입니다. 사진을 누르면 크게 볼 수 있어요.</p></div>
+    <div class="cases">
+      <article class="card case c-a rv"><div class="im" data-zoom><img src="assets/img/lecture-yeosu.jpg" alt="여수 AI 강의 현장 — 수강생이 각자 컴퓨터로 실습하는 모습" loading="lazy"><span class="zoom">크게 보기</span></div>
+        <div class="tx"><small>FIELD · 여수</small><h3>직장인 AI 업무효율화 실습 현장</h3><p>화면에 실제 업무 화면을 띄워 놓고 한 단계씩 따라 하면 끝나는 실습형 강의입니다.</p></div></article>
+      <article class="card case c-b rv"><div class="im" data-zoom><img src="assets/img/poster-yeosu.jpg" alt="여수산단 직장인 AI 교육 홍보 포스터 — 보고서·PPT 아직 혼자 만드세요?" loading="lazy"><span class="ai">AI로 제작한 포스터</span><span class="zoom">크게 보기</span></div>
+        <div class="tx"><small>POSTER · 여수산단</small><h3>보고서·PPT, 아직 혼자 만드세요?</h3><p>챗GPT부터 홍보영상까지 7시간 실습으로 구성한 직장인 AI 교육 안내 포스터입니다.</p></div></article>
+      <article class="card case c-c rv"><div class="im" data-zoom><img src="assets/img/case-teach.jpg" alt="강사가 큰 화면으로 AI 활용법을 설명하는 모습" loading="lazy"><span class="zoom">크게 보기</span></div>
+        <div class="tx"><small>01 · TEACH</small><h3>일의 흐름에 맞춰 쉽게</h3><p>실제 업무와 연결되는 AI 활용 설명.</p></div></article>
+      <article class="card case c-d rv"><div class="im" data-zoom><img src="assets/img/case-practice.jpg" alt="수강생들이 컴퓨터로 직접 실습하는 강의실" loading="lazy"><span class="zoom">크게 보기</span></div>
+        <div class="tx"><small>02 · PRACTICE</small><h3>듣고, 해보고, 내 것으로</h3><p>직접 만들어 보며 익히는 실습.</p></div></article>
+      <article class="card case c-e rv"><div class="im" data-zoom><img src="assets/img/course-webapp.jpg" alt="AI 에이전트 웹앱 제작 — 코딩 없이 하루 완성 실전 가이드 교육 이미지" loading="lazy" style="object-position:50% 20%"><span class="zoom">크게 보기</span></div>
+        <div class="tx"><small>VIBE CODING · 광주</small><h3>AI 에이전트 웹앱 제작 실습</h3><p>코딩 없이 하루 만에 내 웹앱을 완성하는 실전 가이드 (광주 편한마음힐링센터).</p></div></article>
+      <article class="card case c-f rv"><div class="im" data-zoom><img src="assets/img/class-senior.jpg" alt="어르신과 함께 태블릿으로 AI를 배우는 교육 장면" loading="lazy" style="object-position:50% 30%"><span class="ai">AI 생성 예시 이미지</span><span class="zoom">크게 보기</span></div>
+        <div class="tx"><small>SENIOR · 중장년</small><h3>중장년 맞춤, 쉬운 AI 교육</h3><p>어려운 용어 없이 하나씩 따라 할 수 있는 눈높이 실습 (이해를 돕기 위한 예시 이미지).</p></div></article>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== AI LAB ======================== -->
+<section class="sec alt" id="lab" aria-labelledby="labT">
+  <div class="wrap lab">
+    <div class="rv">
+      <div class="vbox" data-video>
+        <video preload="none" playsinline poster="assets/img/ailab-poster.jpg" aria-label="AI 에이전트로 만드는 인터랙티브 반응형 웹앱 강의 소개"><source src="assets/video/ailab.mp4" type="video/mp4"></video>
+        <button class="play" type="button" aria-label="AI LAB 영상 재생"><span><svg class="i f"><use href="#i-play"/></svg>강의 소개 영상 · 1분 24초</span></button>
+      </div>
+      <article class="card lab-card"><img src="assets/img/course-webapp.jpg" alt="웹앱 제작 강의 안내" loading="lazy"><div><h4>AI 에이전트로 만드는<br>인터랙티브 반응형 웹앱</h4><p>Codex · Claude Code 실습 강의</p><a class="btn sm primary" href="#contact" data-course="바이브코딩 웹앱">웹앱 제작 강의 문의</a></div></article>
+    </div>
+    <div class="rv">
+      <span class="eyebrow">AI LAB · BUILD WITH AI</span>
+      <h2 class="h2" id="labT">아이디어가 웹앱이 되는 경험.</h2>
+      <p class="lead">AI와 대화하며 필요한 기능을 설계하고, 컴퓨터와 휴대폰에서 바로 쓰는 웹앱을 하루에 완성합니다.</p>
+      <ol class="lab-steps">
+        <li><span>내 사업에 맞는 카테고리 정하기<small>운영하는 분야에 맞춰 웹앱 구조를 먼저 정합니다.</small></span></li>
+        <li><span>AI로 홍보영상 만들기<small>이미지·영상 AI로 홍보 콘텐츠를 제작해 웹앱에 넣습니다.</small></span></li>
+        <li><span>AI 에이전트로 반응형 웹앱 제작<small>대화만으로 화면·기능을 구현하고 고쳐 갑니다.</small></span></li>
+        <li><span>문의폼과 자동 메일 연결<small>문의가 오면 내 이메일로 바로 받아봅니다.</small></span></li>
+        <li><span>배포 후 단톡방에 링크 공유<small>링크 하나로 누구나 접속하는 내 웹앱 완성.</small></span></li>
+      </ol>
+      <p class="lab-note"><svg class="i"><use href="#i-sparkle"/></svg><span>지금 보고 계신 이 홈페이지의 3D 로봇과 인터랙션도 같은 방식(AI 에이전트 바이브코딩)으로 만들었습니다.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== AI 영상·영화 ======================== -->
+<section class="sec" id="movie" aria-labelledby="movieT">
+  <div class="wrap film">
+    <div class="big6 rv">
+      <span class="eyebrow">AI FILM DIRECTOR</span>
+      <strong>6<small>회 수상</small></strong>
+      <p>국내외 AI 영화제·경진대회 수상 (2024.06 ~ 2025.06)</p>
+      <p style="font-size:15.5px;font-weight:600;color:#B7C4E6">AI 영화감독으로서 쌓은 제작 경험을 강의에 그대로 담았습니다.</p>
+      <a class="btn yellow" href="https://www.youtube.com/@인공지능디지털연구소" target="_blank" rel="noopener">영상 보러 가기 <svg class="i"><use href="#i-up-right"/></svg></a>
+    </div>
+    <div>
+      <div class="sec-head rv" style="margin-bottom:26px"><span class="eyebrow">AI 영상·영화</span><h2 class="h2" id="movieT">수상으로 증명한 AI 영상 제작력</h2></div>
+      <ol class="tl">
+        <li class="card rv"><span class="date">2024.06</span><h3>대한민국 AI 영화제 우수상<span class="tag">AWARD</span></h3><p>주최·주관 한국AI영상제작협회</p></li>
+        <li class="card rv"><span class="date">2024.09</span><h3>제주농산물 AI 홍보 마케팅 활성화 포럼 영상제작대회 우수상<span class="tag">AWARD</span></h3><p>농산물 홍보 영상 분야</p></li>
+        <li class="card rv"><span class="date">2025.04</span><h3>스킨에픽 AI 광고영상 경진대회 수상<span class="tag">AWARD</span></h3><p>AI 광고영상 분야</p></li>
+        <li class="card rv"><span class="date">2025.04 ~ 06</span><h3>Indie Cine Tube Awards · AI Award Winner<span class="tag">AWARD</span></h3><p>해외 AI 영화제</p></li>
+        <li class="card rv"><span class="date">2025.04 ~ 06</span><h3>BABUL ECO FILM FESTIVAL · AI Award Winner<span class="tag">AWARD</span></h3><p>해외 AI 영화제</p></li>
+        <li class="card rv"><span class="date">2025.04 ~ 06</span><h3>Short Way International Short Film Festival · AI Award Winner<span class="tag">AWARD</span></h3><p>해외 AI 단편영화제</p></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== MEDIA ======================== -->
+<section class="sec alt" id="media" aria-labelledby="mediaT">
+  <div class="wrap">
+    <div class="sec-head c rv"><span class="eyebrow">MEDIA</span><h2 class="h2" id="mediaT">활동과 콘텐츠를 더 만나보세요</h2><p class="lead">강의 소식과 AI 활용 노하우, 영상 작품을 꾸준히 공유합니다.</p></div>
+    <div class="media">
+      <a class="card hov rv" href="https://blog.naver.com/80284" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-pen"/></svg></span><h3>네이버 블로그</h3><p>AI 활용 노하우와 강의 후기를 기록합니다.</p><span class="go">blog.naver.com/80284 <svg class="i"><use href="#i-up-right"/></svg></span></a>
+      <a class="card hov rv" href="https://www.youtube.com/@인공지능디지털연구소" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-yt"/></svg></span><h3>YouTube</h3><p>인공지능디지털연구소 채널에서 AI 영상과 강의 영상을 보세요.</p><span class="go">@인공지능디지털연구소 <svg class="i"><use href="#i-up-right"/></svg></span></a>
+      <a class="card hov rv" href="https://litt.ly/jaehyang" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-link"/></svg></span><h3>litt.ly 링크 모음</h3><p>강의 자료·신청 링크를 한곳에서 확인합니다.</p><span class="go">litt.ly/jaehyang <svg class="i"><use href="#i-up-right"/></svg></span></a>
+      <div class="card rv"><span class="ic"><svg class="i"><use href="#i-book"/></svg></span><h3>저서 · 칼럼</h3><p>저서 11권 이상. AI교육투데이에 AI 교육 칼럼을 기고하고 있습니다.</p><span class="go" style="color:var(--muted)">AI교육투데이 필자</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== 강의 문의 ======================== -->
+<section class="sec dark" id="contact" aria-labelledby="contactT">
+  <div class="wrap contact">
+    <div class="cinfo rv">
+      <span class="eyebrow">CONTACT</span>
+      <h2 class="h2" id="contactT">우리 기관에 꼭 맞는<br>AI 교육을 시작하세요</h2>
+      <p class="lead" style="color:#C7D2EE">대상 인원, 희망 일정, 배우고 싶은 주제만 남겨 주세요. 영업일 기준 1일 내에 연락드리겠습니다.</p>
+      <a class="big-tel" href="tel:01034202083"><svg class="i"><use href="#i-phone"/></svg>010-3420-2083</a>
+      <p><a href="mailto:80284@naver.com" style="font-weight:700;color:#fff">80284@naver.com</a> · <a href="https://blog.naver.com/80284" target="_blank" rel="noopener">blog.naver.com/80284</a></p>
+      <ul>
+        <li><span class="n">1</span><span>문의 접수<small>아래 양식 또는 전화로 간단히 남겨 주세요.</small></span></li>
+        <li><span class="n">2</span><span>상담 · 요구 진단<small>기관 업무와 수강 대상을 함께 점검합니다.</small></span></li>
+        <li><span class="n">3</span><span>맞춤 제안서<small>커리큘럼·일정·견적을 제안드립니다.</small></span></li>
+        <li><span class="n">4</span><span>교육 진행<small>전국 출강, 실습 중심으로 진행합니다.</small></span></li>
+        <li><span class="n">5</span><span>결과물 전달 · 사후 지원<small>교육이 끝나면 결과물이 남습니다.</small></span></li>
+      </ul>
+    </div>
+
+    <form class="form rv" id="inqForm" novalidate>
+      <div class="fbody">
+        <h3>강의 문의하기</h3>
+        <p class="req-note"><em style="color:#DC2626;font-style:normal">*</em> 표시는 꼭 입력해 주세요. 접수되면 대표 이메일(80284@naver.com)로 바로 전달됩니다.</p>
+        <div class="f-grid">
+          <div class="f"><label for="org">기관·회사명<em>*</em></label><input id="org" name="기관·회사명" autocomplete="organization" required placeholder="예) ○○시청, ○○농업기술센터"><span class="err">기관 또는 회사명을 입력해 주세요.</span></div>
+          <div class="f"><label for="nm">담당자 성함<em>*</em></label><input id="nm" name="담당자" autocomplete="name" required placeholder="홍길동 담당자"><span class="err">담당자 성함을 입력해 주세요.</span></div>
+          <div class="f"><label for="tel">연락처<em>*</em></label><input id="tel" name="연락처" type="tel" inputmode="tel" autocomplete="tel" required placeholder="010-0000-0000"><span class="err">연락 가능한 전화번호를 입력해 주세요. (숫자 9자리 이상)</span></div>
+          <div class="f"><label for="em">이메일<em>*</em></label><input id="em" name="이메일" type="email" inputmode="email" autocomplete="email" required placeholder="name@example.com"><span class="err">이메일 형식을 확인해 주세요.</span></div>
+          <div class="f"><label for="tg">교육 대상</label><select id="tg" name="교육 대상"><option value="">선택해 주세요</option><option>공공기관 직원</option><option>기업 임직원</option><option>학교 교직원·학생</option><option>농업인·농업기술센터</option><option>소상공인</option><option>시니어·일반 시민</option><option>기타</option></select></div>
+          <div class="f"><label for="pp">예상 인원 (선택)</label><input id="pp" name="예상 인원" inputmode="numeric" placeholder="예) 30명"></div>
+          <div class="f full"><fieldset><legend>희망 과정 (복수 선택 가능)</legend>
+            <div class="pick" id="coursePick">
+              <label><input type="checkbox" name="course" value="AI 업무혁신 MASTER"><span>AI 업무혁신 MASTER</span></label>
+              <label><input type="checkbox" name="course" value="AI CONTENT STUDIO"><span>AI CONTENT STUDIO</span></label>
+              <label><input type="checkbox" name="course" value="AI MOVIE STUDIO"><span>AI MOVIE STUDIO</span></label>
+              <label><input type="checkbox" name="course" value="공공기관 AI 업무혁신"><span>공공기관 AI 업무혁신</span></label>
+              <label><input type="checkbox" name="course" value="농업인 AI 스마트마케팅"><span>농업인 AI 스마트마케팅</span></label>
+              <label><input type="checkbox" name="course" value="교직원 생성형 AI"><span>교직원 생성형 AI</span></label>
+              <label><input type="checkbox" name="course" value="소상공인 AI 콘텐츠 마케팅"><span>소상공인 콘텐츠 마케팅</span></label>
+              <label><input type="checkbox" name="course" value="바이브코딩 웹앱"><span>바이브코딩 웹앱</span></label>
+              <label><input type="checkbox" name="course" value="AI 책쓰기·출판"><span>AI 책쓰기·출판</span></label>
+              <label><input type="checkbox" name="course" value="AI 자격증"><span>AI 자격증</span></label>
+              <label><input type="checkbox" name="course" value="상담 후 결정"><span>상담 후 결정</span></label>
+            </div></fieldset></div>
+          <div class="f full"><label for="dt">희망 일정 (선택)</label><input id="dt" name="희망 일정" placeholder="예) 11월 중순 오후, 반나절 또는 종일"></div>
+          <div class="f full"><label for="msg">문의 내용</label><textarea id="msg" name="문의 내용" placeholder="교육 목적, 현재 고민, 장소(지역) 등을 자유롭게 적어 주세요."></textarea></div>
+          <div class="f full"><label class="agree"><input type="checkbox" id="agree" required><span>개인정보 수집·이용에 동의합니다. (필수) <button type="button" id="privBtn">내용 보기</button></span></label><span class="err" id="agreeErr">개인정보 수집·이용에 동의해 주세요.</span></div>
+          <input class="honey" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+        </div>
+        <button class="btn primary block submit" type="submit" id="submitBtn"><span class="spin"></span><span id="submitTx">강의 문의 접수하기</span></button>
+      </div>
+      <div class="result" id="result" role="status" aria-live="polite">
+        <div class="ck"><svg class="i"><use href="#i-check"/></svg></div>
+        <h3 id="resH">문의가 접수되었습니다</h3>
+        <p id="resP">감사합니다. 영업일 기준 1일 내에 입력하신 연락처로 연락드리겠습니다.</p>
+        <button class="btn" type="button" id="resetBtn">새 문의 작성하기</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ======================== FAQ ======================== -->
+<section class="sec" id="faq" aria-labelledby="faqT">
+  <div class="wrap">
+    <div class="sec-head c rv"><span class="eyebrow">FAQ</span><h2 class="h2" id="faqT">자주 묻는 질문</h2></div>
+    <div class="faq rv">
+      <details open><summary>강의료는 어떻게 산정되나요?<svg class="i"><use href="#i-down"/></svg></summary><div class="a">교육 시간, 인원, 과정, 지역에 따라 달라집니다. 문의해 주시면 기관 예산과 지침에 맞춰 맞춤 견적서를 보내드립니다.</div></details>
+      <details><summary>전국 어디든 출강이 가능한가요?<svg class="i"><use href="#i-down"/></svg></summary><div class="a">네, 전국 출강이 가능합니다. 지역과 일정은 협의하며, 온라인 진행 여부도 상담 시 함께 정하실 수 있습니다.</div></details>
+      <details><summary>몇 명까지 교육할 수 있나요?<svg class="i"><use href="#i-down"/></svg></summary><div class="a">실습 중심 교육이라 인원에 따라 진행 방식이 달라집니다. 소규모 실습부터 특강형까지, 인원과 장소를 알려주시면 가장 알맞은 구성을 제안드립니다.</div></details>
+      <details><summary>우리 기관 업무에 맞게 커리큘럼을 바꿀 수 있나요?<svg class="i"><use href="#i-down"/></svg></summary><div class="a">네. 사전 상담으로 기관의 업무와 수강생 수준을 진단한 뒤 커리큘럼을 맞춤 설계합니다. 실제 업무 자료를 활용한 실습도 가능합니다.</div></details>
+      <details><summary>수강생은 무엇을 준비해야 하나요?<svg class="i"><use href="#i-down"/></svg></summary><div class="a">실습용 노트북 또는 PC와 인터넷 환경이 필요합니다. 사용할 AI 도구와 가입 방법은 교육 전에 미리 안내드립니다.</div></details>
+      <details><summary>교육이 끝나면 무엇이 남나요?<svg class="i"><use href="#i-down"/></svg></summary><div class="a">“교육이 끝나면 결과물이 남습니다.” 수강생이 직접 만든 문서·콘텐츠·영상·웹앱 등 결과물을 가져가실 수 있도록 실습으로 구성합니다.</div></details>
+      <details><summary>AI 자격증과 책쓰기·출판 과정은 어떻게 진행되나요?<svg class="i"><use href="#i-down"/></svg></summary><div class="a">자격 종류와 발급 절차, 책쓰기·출판 일정은 상담 시 자세히 안내드립니다. 강의 문의 양식에서 해당 과정을 선택해 주세요.</div></details>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ======================== 푸터 ======================== -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="brand" href="#home"><img src="assets/img/logo.png" alt="" width="42" height="42"><span><b>인공지능디지털연구소</b><small>AIDL · AI DIGITAL LAB</small></span></a>
+        <p class="slogan">배우는 AI에서, 해내는 AI로. 교육이 끝나면 결과물이 남습니다.</p>
+      </div>
+      <div><h4>바로가기</h4><ul>
+        <li><a href="#about">ABOUT 최재향</a></li><li><a href="#programs">AI교육프로그램</a></li><li><a href="#result5">JH RESULT 5</a></li><li><a href="#cases">교육 사례</a></li><li><a href="#movie">AI 영상·영화</a></li><li><a href="#contact">강의 문의</a></li></ul></div>
+      <div><h4>문의</h4><ul>
+        <li><a href="tel:01034202083">010-3420-2083</a></li><li><a href="mailto:80284@naver.com">80284@naver.com</a></li>
+        <li><a href="https://blog.naver.com/80284" target="_blank" rel="noopener">blog.naver.com/80284</a></li>
+        <li><a href="https://www.youtube.com/@인공지능디지털연구소" target="_blank" rel="noopener">YouTube @인공지능디지털연구소</a></li>
+        <li><a href="https://litt.ly/jaehyang" target="_blank" rel="noopener">litt.ly/jaehyang</a></li></ul></div>
+    </div>
+    <div class="copy"><span>© <span id="yr">2026</span> 인공지능디지털연구소(AIDL) · 대표 최재향. All rights reserved.</span><button type="button" id="privBtn2">개인정보처리방침</button></div>
+  </div>
+</footer>
+
+<a class="btn primary fab" id="fab" href="#contact"><svg class="i"><use href="#i-mail"/></svg>강의 문의</a>
+<div class="mbar"><a class="btn" href="tel:01034202083"><svg class="i"><use href="#i-phone"/></svg>전화하기</a><a class="btn primary" href="#contact"><svg class="i"><use href="#i-mail"/></svg>강의 문의</a></div>
+
+<div class="lightbox" id="lb" role="dialog" aria-modal="true" aria-label="이미지 크게 보기"><button type="button" id="lbX" aria-label="닫기"><svg class="i"><use href="#i-x"/></svg></button><img id="lbImg" alt=""></div>
+
+<div class="modal" id="priv" role="dialog" aria-modal="true" aria-labelledby="privT">
+  <div class="box">
+    <h3 id="privT">개인정보 수집·이용 안내</h3>
+    <ul>
+      <li><b>수집 항목</b>: 기관·회사명, 담당자 성함, 연락처, 이메일, 교육 대상·인원·희망 과정·일정, 문의 내용</li>
+      <li><b>수집·이용 목적</b>: 강의 상담, 견적·제안서 발송, 일정 협의 및 회신</li>
+      <li><b>보유·이용 기간</b>: 상담 목적 달성 후 지체 없이 파기하며, 삭제를 요청하시면 즉시 삭제합니다.</li>
+      <li>동의를 거부하실 수 있으나, 거부 시 온라인 문의 접수가 제한됩니다. 이 경우 전화(010-3420-2083)로 문의해 주세요.</li>
+      <li>문의 내용은 상담 목적 외에는 사용하지 않으며, 접수된 내용은 대표 이메일로만 전달됩니다.</li>
+    </ul>
+    <p style="margin-top:14px"><button class="btn sm primary" type="button" id="privX">확인</button></p>
+  </div>
+</div>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
