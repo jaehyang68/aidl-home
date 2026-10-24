@@ -4,7 +4,9 @@
    ============================================================ */
 const CONFIG = {
   MAIL_TO: '80284@naver.com',
+  FORM_KEY: '4aa1e1689319c20be7dc5ac1f7770129',   // FormSubmit 활성화 메일에서 받은 전용 주소(이메일 노출 방지)
   PHONE: '010-3420-2083',
+  PREVIEW: false,   // 미리보기 전용 빌드에서만 true
   SPLINE_URL: 'https://prod.spline.design/AwO-6ba8cJrTfYkK/scene.splinecode',
   SPLINE_VIEWER: 'https://cdn.spline.design/@splinetool/viewer@2.0.111/build/spline-viewer.js'
 };
@@ -93,12 +95,13 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* 5) 3D 로봇 (Spline) — 화면에 가까워지면 불러옴 ------------------- */
 (() => {
-  const stage = $('#stage'), v = $('#robot'), msg = $('#robotMsg');
+  const stage = $('#stage'), v = $('#robotViewer'), msg = $('#robotMsg');
   let started = false, done = false;
   const ready = () => { if (done) return; done = true; stage.classList.add('ready'); msg.style.display = 'none'; };
-  const fail = () => { if (done) return; msg.textContent = '3D 로봇을 불러오지 못했어요. 새로고침(F5)하거나 잠시 후 다시 열어 주세요.'; };
+  const fail = () => { if (done) return; stage.classList.add('failed'); msg.textContent = '3D 로봇을 불러오지 못했어요. 새로고침(F5)하거나 잠시 후 다시 열어 주세요.'; };
   async function start() {
     if (started) return; started = true;
+    if (CONFIG.PREVIEW) { stage.classList.add('failed'); msg.textContent = '미리보기 화면에서는 로봇 사진이 표시됩니다. 배포한 사이트에서는 3D 로봇이 움직입니다.'; return; }
     try { await import(CONFIG.SPLINE_VIEWER); } catch (e) { console.warn('[AIDL] spline viewer load error', e); fail(); return; }
     v.addEventListener('load-complete', ready);
     v.setAttribute('url', CONFIG.SPLINE_URL);
@@ -123,11 +126,49 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduce) { el.textContent = msgs[0]; return; }
   let started = false;
   const run = () => { let m = 0, i = 0; (function tick() {
+    if (document.body.dataset.speaking === '1') return setTimeout(tick, 400);
     const t = msgs[m]; el.textContent = t.slice(0, i);
     if (i++ < t.length) return setTimeout(tick, 55);
     setTimeout(() => { m = (m + 1) % msgs.length; i = 0; tick(); }, 2300);
   })(); };
   new IntersectionObserver((es, o) => { if (es[0].isIntersecting && !started) { started = true; run(); o.disconnect(); } }, { threshold: .3 }).observe(el);
+})();
+
+/* 6-2) 로봇 목소리 (브라우저 음성 합성 · 무료) ----------------------- */
+(() => {
+  const btn = $('#speakBtn'), bubble = $('#bubble'), stage = $('#stage'), note = $('#voiceNote');
+  const label = (on) => `<svg class="i"><use href="#i-${on ? 'x' : 'vol'}"/></svg><span>${on ? '말하기 멈춤' : '로봇 인사 듣기'}</span>`;
+  if (!('speechSynthesis' in window)) { btn.disabled = true; btn.querySelector('span').textContent = '이 브라우저는 음성을 지원하지 않아요'; return; }
+  const LINES = [
+    '안녕하세요! 인공지능디지털연구소 로봇 비서, 넥스봇입니다.',
+    '저를 마우스로 끌어서 돌려 보세요.',
+    'AI로 일이 쉬워지는 방법, 최재향 대표님과 함께 배워 보세요.',
+    '강의 문의는 아래 버튼을 눌러 주세요. 감사합니다!'
+  ];
+  let voices = [], on = false, token = 0;
+  const loadVoices = () => { voices = speechSynthesis.getVoices(); };
+  loadVoices(); speechSynthesis.addEventListener && speechSynthesis.addEventListener('voiceschanged', loadVoices);
+  const pick = () => voices.find(v => /^ko/i.test(v.lang) && /google|natural|online|sun|hye|seo/i.test(v.name)) || voices.find(v => /^ko/i.test(v.lang));
+  const finish = () => { on = false; document.body.dataset.speaking = '0'; stage.classList.remove('speaking'); btn.innerHTML = label(false); };
+  function stop() { token++; speechSynthesis.cancel(); finish(); }
+  function speak() {
+    loadVoices();
+    on = true; const my = ++token; document.body.dataset.speaking = '1'; stage.classList.add('speaking'); btn.innerHTML = label(true);
+    const v = pick(); if (!v) note.textContent = '이 기기에는 한국어 음성이 없어 소리가 어색하거나 나지 않을 수 있어요. 휴대폰·크롬에서는 대부분 잘 나옵니다.';
+    let i = 0;
+    const next = () => {
+      if (my !== token) return;
+      if (i >= LINES.length) { finish(); return; }
+      const u = new SpeechSynthesisUtterance(LINES[i]); bubble.textContent = LINES[i];
+      u.lang = 'ko-KR'; if (v) u.voice = v; u.rate = .97; u.pitch = .85; u.volume = 1;
+      u.onend = () => { i++; setTimeout(next, 250); }; u.onerror = () => { if (my === token) finish(); };
+      speechSynthesis.speak(u);
+    };
+    speechSynthesis.cancel(); setTimeout(next, 80);
+  }
+  btn.addEventListener('click', () => (on ? stop() : speak()));
+  document.addEventListener('visibilitychange', () => { if (document.hidden && on) stop(); });
+  addEventListener('pagehide', () => speechSynthesis.cancel());
 })();
 
 /* 7) 소개/AI LAB 영상 재생 버튼 --------------------------------------- */
@@ -240,13 +281,15 @@ $$('[data-video]').forEach(box => {
       _template: 'table', _captcha: 'false', email: data['이메일'], name: data['담당자']
     }, data);
 
+    if (CONFIG.PREVIEW) { show('preview', data); return; }
     btn.disabled = true; btn.classList.add('loading'); tx.textContent = '접수 중입니다…';
     try {
-      const r = await fetch('https://formsubmit.co/ajax/' + CONFIG.MAIL_TO, {
+      const r = await fetch('https://formsubmit.co/ajax/' + CONFIG.FORM_KEY, {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(payload)
       });
       const j = await r.json().catch(() => ({}));
-      if (r.ok && (j.success === true || j.success === 'true')) show(true); else throw new Error(j.message || r.status);
+      if (r.ok && (j.success === true || j.success === 'true') && !/activat/i.test(j.message || '')) show(true);
+      else { if (/activat/i.test(j.message || '')) console.warn('[AIDL] FormSubmit 활성화 메일(80284@naver.com)의 ACTIVATE FORM 버튼을 눌러 주세요.'); throw new Error(j.message || r.status); }
     } catch (err) {
       console.warn('[AIDL] form error', err);
       show(false, data);
@@ -256,9 +299,12 @@ $$('[data-video]').forEach(box => {
   });
 
   function show(ok, data) {
+    const pv = ok === 'preview'; if (pv) ok = true;
     res.classList.toggle('fail', !ok);
-    $('#resH').textContent = ok ? '문의가 접수되었습니다' : '전송이 원활하지 않았어요';
-    if (ok) {
+    $('#resH').textContent = pv ? '입력 확인 완료 (미리보기)' : ok ? '문의가 접수되었습니다' : '전송이 원활하지 않았어요';
+    if (pv) {
+      $('#resP').textContent = '입력 검사까지 정상 작동합니다. 이 미리보기에서는 메일이 전송되지 않으며, 배포한 사이트에서 접수하면 80284@naver.com으로 전달됩니다.';
+    } else if (ok) {
       $('#resP').textContent = '감사합니다. 영업일 기준 1일 내에 입력하신 연락처로 연락드리겠습니다.';
     } else {
       const body = encodeURIComponent(Object.entries(data || {}).map(([k, v]) => `${k}: ${v}`).join('\n'));
@@ -276,4 +322,36 @@ $$('[data-video]').forEach(box => {
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12, rootMargin: '0px 0px -40px 0px' });
   $$('.rv').forEach(n => io.observe(n));
   $('#yr').textContent = new Date().getFullYear();
+})();
+
+/* ===== 안내 도우미(핑크펫) ===== */
+(function(){
+  var pet=document.getElementById('pet'),bub=document.getElementById('petBubble'),x=document.getElementById('petX');
+  if(!pet||!bub)return;
+  var MSG={
+    hero:'안녕하세요! 저는 안내 도우미예요 💗<br><b>궁금한 건 카톡으로 물어보세요</b>',
+    robot:'로봇을 <b>마우스로 끌어</b> 돌려 보세요!<br>휠로 확대도 돼요 🤖',
+    about:'최재향 대표님은 <b>4년차 AI 강사</b>이자<br>AI 영화감독이에요 🎬',
+    programs:'기관에 맞는 <b>맞춤 커리큘럼</b>도<br>가능해요. 편하게 문의하세요!',
+    result5:'교육이 끝나면 <b>결과물이 남는</b><br>JH RESULT 5 방식이에요',
+    cases:'실제 <b>교육 현장 사례</b>를<br>사진으로 볼 수 있어요 📷',
+    lab:'AI LAB에서 <b>직접 만든 AI 작업</b>을<br>보실 수 있어요',
+    movie:'국내외 AI 영화제 <b>수상 6건</b>!<br>인증서도 확인해 보세요 🏆',
+    media:'<b>저서 11권+</b>, 블로그·유튜브도<br>구경하세요 📚',
+    contact:'여기에 남겨 주시면 <b>1일 내</b> 연락드려요.<br>카톡이 더 빠를 수 있어요 💬'
+  };
+  var cur='',closed=false;pet.classList.add('quiet');
+  try{closed=sessionStorage.getItem('petOff')==='1'}catch(e){}
+  if(closed)pet.classList.add('off');
+  function say(k){
+    if(k===cur||!MSG[k])return;cur=k;pet.classList.toggle('quiet',k==='hero');
+    bub.classList.add('swap');
+    setTimeout(function(){bub.innerHTML=MSG[k];bub.classList.remove('swap')},220);
+  }
+  x.addEventListener('click',function(){pet.classList.add('off');try{sessionStorage.setItem('petOff','1')}catch(e){}});
+  var secs=['home','robot','about','programs','result5','cases','lab','movie','media','contact'].map(function(i){return document.getElementById(i)}).filter(Boolean);
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){var id=en.target.id;say(id==='home'?'hero':id)}})},{rootMargin:'-40% 0px -50% 0px'});
+    secs.forEach(function(e){io.observe(e)});
+  }
 })();

@@ -28,6 +28,7 @@
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
 <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a2 2 0 0 1-2.06 0L2 7"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1.1-4.3A8 8 0 1 1 21 12z"/></symbol>
 <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
 <symbol id="i-up-right" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></symbol>
 <symbol id="i-play" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
@@ -55,6 +56,8 @@
 <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
 <symbol id="i-yt" viewBox="0 0 24 24"><path d="M2.5 17a24.1 24.1 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.6 49.6 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.1 24.1 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.6 49.6 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></symbol>
 <symbol id="i-pen" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+<symbol id="i-pointer" viewBox="0 0 24 24"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="m13 13 6 6"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></symbol>
 <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></symbol>
 </svg>
 
@@ -105,14 +108,14 @@
         <a class="btn primary" href="#contact">우리 기관 맞춤 강의 문의하기 <svg class="i"><use href="#i-arrow"/></svg></a>
         <a class="btn ghost" href="#movie">포트폴리오 보기</a>
       </div>
-      <div class="hero-tags"><span>전국 출강</span><span>기관 맞춤 커리큘럼</span><span>실습·결과물 중심</span></div>
+      <div class="hero-tags"><span class="t1">전국 출강</span><span class="t2">기관 맞춤 커리큘럼</span><span class="t3">실습·결과물 중심</span></div>
     </div>
   </div>
   <div class="stats" aria-label="신뢰 지표">
     <div class="wrap">
       <div class="stat"><b><span data-count="11">11</span><em>권+</em></b><span>저서</span></div>
       <div class="stat"><b><span data-count="6">6</span><em>회</em></b><span>국내외 AI 영화제·경진대회 수상</span></div>
-      <div class="stat"><b><span data-count="3">3</span><em>년차</em></b><span>AI 현장 강의</span></div>
+      <div class="stat"><b><span data-count="4">4</span><em>년차</em></b><span>AI 현장 강의</span></div>
       <div class="stat"><b>전국</b><span>공공기관·기업·학교·농업기술센터</span></div>
     </div>
   </div>
@@ -129,43 +132,30 @@
   <div class="wrap robot-grid">
     <div class="stage rv" id="stage">
       <span class="pill"><i></i>NEXBOT · 마우스로 움직여 보세요</span>
-      <div class="fb" aria-hidden="true">
-        <!-- 3D가 불러와지기 전·불러오지 못할 때 보이는 인사 로봇 -->
-        <svg class="nex" viewBox="0 0 300 370" role="img" aria-label="손을 흔드는 로봇 NEXBOT">
-          <defs>
-            <linearGradient id="gB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2b3550"/><stop offset="1" stop-color="#0b1020"/></linearGradient>
-            <linearGradient id="gV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#101a33"/><stop offset="1" stop-color="#050912"/></linearGradient>
-          </defs>
-          <ellipse cx="150" cy="352" rx="78" ry="9" fill="#0f172a" opacity=".18"/>
-          <line x1="150" y1="30" x2="150" y2="54" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
-          <circle cx="150" cy="24" r="9" fill="#2563EB"><animate attributeName="opacity" values="1;.35;1" dur="1.6s" repeatCount="indefinite"/></circle>
-          <rect x="94" y="52" width="112" height="90" rx="36" fill="url(#gB)"/>
-          <rect x="106" y="68" width="88" height="52" rx="24" fill="url(#gV)"/>
-          <ellipse class="eye" cx="131" cy="92" rx="9" ry="11" fill="#38bdf8"/>
-          <ellipse class="eye" cx="169" cy="92" rx="9" ry="11" fill="#38bdf8"/>
-          <path d="M138 108q12 9 24 0" stroke="#38bdf8" stroke-width="4" fill="none" stroke-linecap="round"/>
-          <circle cx="92" cy="98" r="9" fill="#2563EB"/><circle cx="208" cy="98" r="9" fill="#2563EB"/>
-          <rect x="138" y="142" width="24" height="14" rx="5" fill="#0b1020"/>
-          <rect x="96" y="152" width="108" height="118" rx="34" fill="url(#gB)"/>
-          <rect x="124" y="180" width="52" height="40" rx="12" fill="url(#gV)"/>
-          <text x="150" y="207" text-anchor="middle" font-family="Pretendard,sans-serif" font-weight="800" font-size="20" fill="#38bdf8">AI</text>
-          <circle cx="132" cy="240" r="4" fill="#10B981"/><circle cx="150" cy="240" r="4" fill="#FFE17C"/><circle cx="168" cy="240" r="4" fill="#2563EB"/>
-          <rect x="62" y="160" width="30" height="96" rx="15" fill="#0b1020"/><circle cx="77" cy="262" r="16" fill="#2563EB"/>
-          <g class="arm-r"><rect x="208" y="160" width="30" height="96" rx="15" fill="#0b1020"/><circle cx="223" cy="262" r="16" fill="#2563EB"/></g>
-          <rect x="114" y="264" width="32" height="72" rx="14" fill="#0b1020"/><rect x="154" y="264" width="32" height="72" rx="14" fill="#0b1020"/>
-          <ellipse cx="130" cy="340" rx="24" ry="11" fill="#2563EB"/><ellipse cx="170" cy="340" rx="24" ry="11" fill="#2563EB"/>
-        </svg>
-      </div>
+      <div class="fb" aria-hidden="true"><img src="assets/img/robot-poster.jpg" alt="" width="900" height="896"><span class="loader" id="loader"><i></i>3D 로봇을 불러오는 중…</span></div>
       <!-- 3D 로봇 (Spline) : assets/js/main.js 가 화면에 가까워지면 불러옵니다 -->
-      <spline-viewer id="robot" loading-anim-type="none" events-target="global"></spline-viewer>
-      <p class="stat-msg" id="robotMsg">3D 로봇을 불러오는 중…</p>
+      <spline-viewer id="robotViewer" loading-anim-type="none" events-target="global"></spline-viewer>
+      <p class="stat-msg" id="robotMsg"></p>
+      <span class="speak-ind" id="speakInd"><b></b><b></b><b></b>로봇이 말하는 중</span>
     </div>
     <div class="rv">
       <div class="bubble" id="bubble" aria-live="polite"></div>
       <h2 class="h2" id="robotTitle">AI가 만든 로봇이<br>먼저 인사드립니다</h2>
       <p class="lead">강의에서는 이런 3D 로봇·영상·웹앱을 코딩 없이 직접 만들어 보는 실습까지 함께합니다. 어렵지 않아요. 따라 하다 보면 내 결과물이 완성됩니다.</p>
       <div class="chips"><span class="chip">AI 업무효율화</span><span class="chip">바이브코딩 웹앱</span><span class="chip">AI 홍보영상</span><span class="chip">AI 영화 제작</span><span class="chip">책쓰기·출판</span></div>
-      <a class="btn yellow" href="#contact">우리 기관 강의 문의하기 <svg class="i"><use href="#i-arrow"/></svg></a>
+      <div class="howto" aria-label="로봇 사용법">
+        <h3>로봇 사용법</h3>
+        <ul>
+          <li><svg class="i"><use href="#i-pointer"/></svg><span><b>끌어서 돌려 보기</b>마우스를 누른 채 끌면(모바일은 손가락으로 밀면) 로봇이 돌아갑니다.</span></li>
+          <li><svg class="i"><use href="#i-search"/></svg><span><b>가까이·멀리 보기</b>마우스 휠(모바일은 두 손가락 벌리기)로 확대·축소할 수 있어요.</span></li>
+          <li><svg class="i"><use href="#i-vol"/></svg><span><b>로봇 목소리 듣기</b>아래 ‘로봇 인사 듣기’ 버튼을 누르면 로봇이 직접 인사합니다.</span></li>
+        </ul>
+      </div>
+      <div class="cta-row" style="margin-top:26px">
+        <button class="btn primary" type="button" id="speakBtn"><svg class="i"><use href="#i-vol"/></svg><span>로봇 인사 듣기</span></button>
+        <a class="btn yellow" href="#contact">강의 문의하기 <svg class="i"><use href="#i-arrow"/></svg></a>
+      </div>
+      <p class="voice-note" id="voiceNote">소리가 나지 않으면 기기 볼륨과 무음 모드를 확인해 주세요.</p>
     </div>
   </div>
 </section>
@@ -187,7 +177,7 @@
 <section class="sec alt" id="about" aria-labelledby="aboutT">
   <div class="wrap about">
     <div class="portrait rv">
-      <div class="ph"><img src="assets/img/profile.jpg" alt="인공지능디지털연구소 최재향 대표 프로필 사진" loading="lazy" width="1000" height="1500"></div>
+      <div class="ph"><img src="assets/img/profile.jpg" alt="인공지능디지털연구소 최재향 대표 프로필 사진" loading="lazy" width="1000" height="1250"></div>
       <div class="nameplate"><small>AI 강사 · AI 영화감독</small><b>최재향 대표</b></div>
     </div>
     <div class="rv">
@@ -203,9 +193,9 @@
       </ul>
       <p class="philo">기술을 넘어 현장으로, 생각을 넘어 창작으로 — AI로 여는 실무 생산성과 창의적 혁신</p>
       <div class="links">
-        <a class="btn sm" href="https://blog.naver.com/80284" target="_blank" rel="noopener">네이버 블로그 <svg class="i"><use href="#i-up-right"/></svg></a>
-        <a class="btn sm" href="https://www.youtube.com/@인공지능디지털연구소" target="_blank" rel="noopener">YouTube <svg class="i"><use href="#i-up-right"/></svg></a>
-        <a class="btn sm" href="https://litt.ly/jaehyang" target="_blank" rel="noopener">litt.ly <svg class="i"><use href="#i-up-right"/></svg></a>
+        <a class="btn sm soc naver" href="https://blog.naver.com/80284" target="_blank" rel="noopener"><svg class="i"><use href="#i-pen"/></svg>네이버 블로그 <svg class="i"><use href="#i-up-right"/></svg></a>
+        <a class="btn sm soc yt" href="https://www.youtube.com/@인공지능디지털연구소" target="_blank" rel="noopener"><svg class="i"><use href="#i-yt"/></svg>YouTube <svg class="i"><use href="#i-up-right"/></svg></a>
+        <a class="btn sm soc litt" href="https://litt.ly/jaehyang" target="_blank" rel="noopener"><svg class="i"><use href="#i-link"/></svg>litt.ly <svg class="i"><use href="#i-up-right"/></svg></a>
       </div>
     </div>
   </div>
@@ -365,17 +355,43 @@
       </ol>
     </div>
   </div>
+  <div class="wrap" style="margin-top:clamp(48px,7vw,84px)">
+    <div class="sec-head rv" style="margin-bottom:26px"><span class="eyebrow">CERTIFICATES</span><h2 class="h2">로렐 · 상장 · 인증서 · 상패</h2><p class="lead">국제 AI 영화제에서 받은 공식 인증입니다. 사진을 누르면 크게 볼 수 있어요. 출품작은 <b>The Boy and the Pinwheel</b> 입니다.</p></div>
+    <div class="awards">
+      <figure class="card aw a1 rv"><div class="im" data-zoom><img src="assets/img/award-babul.jpg" alt="9th Babul Eco Film Festival 2025 상영 인증서 (Certificate of Screening)" loading="lazy"><span class="zoom">크게 보기</span></div><figcaption><b>9th BABUL ECO FILM FESTIVAL</b>Certificate of Screening · 2025.06</figcaption></figure>
+      <figure class="card aw a2 rv"><div class="im" data-zoom><img src="assets/img/award-icta.jpg" alt="Indie Cine Tube Awards 14th Season Best Animated Films 부문 Winner 인증서" loading="lazy"><span class="zoom">크게 보기</span></div><figcaption><b>Indie Cine Tube Awards</b>14th Season · Best Animated Films Winner</figcaption></figure>
+      <div class="a3">
+        <figure class="card aw rv"><div class="im dark" data-zoom><img src="assets/img/award-laurel-winner.jpg" alt="Indie Cine Tube Awards 2024-2025 Winner 로렐" loading="lazy"><span class="zoom">크게 보기</span></div><figcaption><b>WINNER 2024–2025</b>Indie Cine Tube Awards 로렐</figcaption></figure>
+        <figure class="card aw rv"><div class="im" data-zoom><img src="assets/img/award-laurel-animation.jpg" alt="Animation 부문 2025 공식 로렐" loading="lazy"><span class="zoom">크게 보기</span></div><figcaption><b>ANIMATION 2025</b>부문 공식 로렐</figcaption></figure>
+      </div>
+      <figure class="card aw a4 rv"><div class="im dark" data-zoom><img src="assets/img/award-iffa.jpg" alt="Indie Film Festival Awards IFFA 2025 상패" loading="lazy"><span class="zoom">크게 보기</span></div><figcaption><b>INDIE FILM FESTIVAL AWARDS (IFFA)</b>2025.06.02–05 · In recognition of excellence in film making</figcaption></figure>
+    </div>
+  </div>
 </section>
 
 <!-- ======================== MEDIA ======================== -->
 <section class="sec alt" id="media" aria-labelledby="mediaT">
   <div class="wrap">
     <div class="sec-head c rv"><span class="eyebrow">MEDIA</span><h2 class="h2" id="mediaT">활동과 콘텐츠를 더 만나보세요</h2><p class="lead">강의 소식과 AI 활용 노하우, 영상 작품을 꾸준히 공유합니다.</p></div>
+    <div class="books card rv">
+      <div class="bk-img im" data-zoom><img src="assets/img/books.jpg" alt="최재향 대표 공저 저서 표지 모음 — 이것이 AI 리터러시다!, 이것이 AI 에이전트·챗봇이다 외" loading="lazy" width="1400" height="786"><span class="zoom">크게 보기</span></div>
+      <div class="bk-tx">
+        <span class="tag">BOOKS</span>
+        <h3>저서 11권 이상,<br>현장의 AI를 책으로 씁니다</h3>
+        <p>강의에서 검증한 AI 활용 노하우를 책으로 정리해 왔습니다. 공저를 포함한 대표 저서입니다.</p>
+        <ul>
+          <li><svg class="i"><use href="#i-book"/></svg><span><b>이것이 AI 리터러시다!</b> 7명의 AI 실전 노하우로 배우는 AI 활용 A to Z</span></li>
+          <li><svg class="i"><use href="#i-book"/></svg><span><b>이것이 AI 에이전트·챗봇이다</b> AI 에이전트가 가져올 비즈니스 변화와 대응전략</span></li>
+          <li><svg class="i"><use href="#i-book"/></svg><span>중소상공인 생성형 AI 홍보마케팅, AI 도구 활용 실무서 등</span></li>
+        </ul>
+        <a class="btn sm primary" href="#contact" data-course="AI 책쓰기·출판">AI 책쓰기·출판 강의 문의 <svg class="i"><use href="#i-arrow"/></svg></a>
+      </div>
+    </div>
     <div class="media">
-      <a class="card hov rv" href="https://blog.naver.com/80284" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-pen"/></svg></span><h3>네이버 블로그</h3><p>AI 활용 노하우와 강의 후기를 기록합니다.</p><span class="go">blog.naver.com/80284 <svg class="i"><use href="#i-up-right"/></svg></span></a>
-      <a class="card hov rv" href="https://www.youtube.com/@인공지능디지털연구소" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-yt"/></svg></span><h3>YouTube</h3><p>인공지능디지털연구소 채널에서 AI 영상과 강의 영상을 보세요.</p><span class="go">@인공지능디지털연구소 <svg class="i"><use href="#i-up-right"/></svg></span></a>
-      <a class="card hov rv" href="https://litt.ly/jaehyang" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-link"/></svg></span><h3>litt.ly 링크 모음</h3><p>강의 자료·신청 링크를 한곳에서 확인합니다.</p><span class="go">litt.ly/jaehyang <svg class="i"><use href="#i-up-right"/></svg></span></a>
-      <div class="card rv"><span class="ic"><svg class="i"><use href="#i-book"/></svg></span><h3>저서 · 칼럼</h3><p>저서 11권 이상. AI교육투데이에 AI 교육 칼럼을 기고하고 있습니다.</p><span class="go" style="color:var(--muted)">AI교육투데이 필자</span></div>
+      <a class="card hov rv m-naver" href="https://blog.naver.com/80284" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-pen"/></svg></span><h3>네이버 블로그</h3><p>AI 활용 노하우와 강의 후기를 기록합니다.</p><span class="go">blog.naver.com/80284 <svg class="i"><use href="#i-up-right"/></svg></span></a>
+      <a class="card hov rv m-yt" href="https://www.youtube.com/@인공지능디지털연구소" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-yt"/></svg></span><h3>YouTube</h3><p>인공지능디지털연구소 채널에서 AI 영상과 강의 영상을 보세요.</p><span class="go">@인공지능디지털연구소 <svg class="i"><use href="#i-up-right"/></svg></span></a>
+      <a class="card hov rv m-litt" href="https://litt.ly/jaehyang" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-link"/></svg></span><h3>litt.ly 링크 모음</h3><p>강의 자료·신청 링크를 한곳에서 확인합니다.</p><span class="go">litt.ly/jaehyang <svg class="i"><use href="#i-up-right"/></svg></span></a>
+      <div class="card rv"><span class="ic"><svg class="i"><use href="#i-pen"/></svg></span><h3>AI교육투데이 칼럼</h3><p>AI 교육 현장의 이야기를 칼럼으로 기고하고 있습니다.</p><span class="go" style="color:var(--muted)">AI교육투데이 필자</span></div>
     </div>
   </div>
 </section>
@@ -388,6 +404,7 @@
       <h2 class="h2" id="contactT">우리 기관에 꼭 맞는<br>AI 교육을 시작하세요</h2>
       <p class="lead" style="color:#C7D2EE">대상 인원, 희망 일정, 배우고 싶은 주제만 남겨 주세요. 영업일 기준 1일 내에 연락드리겠습니다.</p>
       <a class="big-tel" href="tel:01034202083"><svg class="i"><use href="#i-phone"/></svg>010-3420-2083</a>
+      <a class="btn kakao kbig" href="http://pf.kakao.com/_xcXRTX/chat" target="_blank" rel="noopener"><svg class="i"><use href="#i-chat"/></svg>카카오톡으로 바로 문의 <small>채팅 상담</small></a>
       <p><a href="mailto:80284@naver.com" style="font-weight:700;color:#fff">80284@naver.com</a> · <a href="https://blog.naver.com/80284" target="_blank" rel="noopener">blog.naver.com/80284</a></p>
       <ul>
         <li><span class="n">1</span><span>문의 접수<small>아래 양식 또는 전화로 간단히 남겨 주세요.</small></span></li>
@@ -477,8 +494,13 @@
   </div>
 </footer>
 
-<a class="btn primary fab" id="fab" href="#contact"><svg class="i"><use href="#i-mail"/></svg>강의 문의</a>
-<div class="mbar"><a class="btn" href="tel:01034202083"><svg class="i"><use href="#i-phone"/></svg>전화하기</a><a class="btn primary" href="#contact"><svg class="i"><use href="#i-mail"/></svg>강의 문의</a></div>
+<aside class="pet" id="pet" aria-label="안내 도우미">
+  <a class="pet-bubble" id="petBubble" href="http://pf.kakao.com/_xcXRTX/chat" target="_blank" rel="noopener">안녕하세요! 저는 안내 도우미예요 💗<br><b>궁금한 건 카톡으로 물어보세요</b></a>
+  <button class="pet-x" id="petX" type="button" aria-label="안내 도우미 닫기">×</button>
+  <img src="assets/img/pinkpet.png" alt="" width="92" height="139" loading="lazy">
+</aside>
+<div class="fab" id="fab"><a class="btn kakao" href="http://pf.kakao.com/_xcXRTX/chat" target="_blank" rel="noopener"><svg class="i"><use href="#i-chat"/></svg>카톡 문의</a><a class="btn primary" href="#contact"><svg class="i"><use href="#i-mail"/></svg>강의 문의</a></div>
+<div class="mbar"><a class="btn" href="tel:01034202083"><svg class="i"><use href="#i-phone"/></svg>전화</a><a class="btn kakao" href="http://pf.kakao.com/_xcXRTX/chat" target="_blank" rel="noopener"><svg class="i"><use href="#i-chat"/></svg>카톡</a><a class="btn primary" href="#contact"><svg class="i"><use href="#i-mail"/></svg>강의 문의</a></div>
 
 <div class="lightbox" id="lb" role="dialog" aria-modal="true" aria-label="이미지 크게 보기"><button type="button" id="lbX" aria-label="닫기"><svg class="i"><use href="#i-x"/></svg></button><img id="lbImg" alt=""></div>
 
