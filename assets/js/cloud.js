@@ -74,6 +74,13 @@
       return call('POST', '/storage/v1/object/' + BUCKET + '/' + path, { auth: true, body: arr, type: m[1] }).then(function () { return URL_ + '/storage/v1/object/public/' + BUCKET + '/' + path; });
     },
 
+    /* 문의 통계: 누구나 기록(추가)만 / 집계 보기는 관리자 */
+    track: function (rec) {
+      try { if (C.loggedIn()) return Promise.resolve(); } catch (e) {}
+      return call('POST', '/rest/v1/inquiry_events', { json: { program_id: String(rec.id || 'general').slice(0, 60), program_title: String(rec.title || '').slice(0, 120), kind: rec.kind, place: String(rec.place || '').slice(0, 20) }, prefer: 'return=minimal' }).catch(function () {});
+    },
+    stats: function () { return call('POST', '/rest/v1/rpc/inquiry_stats', { auth: true, json: {} }); },
+
     /* 구독자: 누구나 신청(추가)만 / 보기·삭제는 관리자 */
     addSub: function (rec) {
       return call('POST', '/rest/v1/subscribers', { json: { name: rec.name, phone: rec.phone, email: rec.email }, prefer: 'return=minimal' })

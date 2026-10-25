@@ -59,12 +59,12 @@
     root.innerHTML =
       '<div class="ad-bar"><b>🛠 관리자 모드</b>' + (CL ? '<span class="ad-note">☁ 클라우드에 연결됨 · 저장하면 <u>모든 방문자</u>에게 바로 보입니다. (' + esc(CL.email()) + ')</span><button class="btn sm" type="button" id="adOut">로그아웃</button>' : '<span class="ad-note">여기서 바꾼 내용은 <u>이 브라우저</u>에 저장됩니다. 모든 방문자에게 보이려면 [백업·가져오기]에서 내려받은 파일을 올려 주세요.</span>') + '<button class="btn sm yellow" type="button" id="adHome">홈 화면으로 돌아가기</button></div>' +
       '<div class="ad-in"><div class="ad-tabs" role="tablist">' +
-      tabBtn('prog', '프로그램 관리 (' + A.getPrograms().length + ')') + tabBtn('bak', '백업·가져오기') + '</div>' +
+      tabBtn('prog', '프로그램 관리 (' + A.getPrograms().length + ')') + (CL ? tabBtn('stats', '📊 문의 통계') : '') + tabBtn('bak', '백업·가져오기') + '</div>' +
       '<div id="adBody"></div></div>';
     $('#adHome', root).onclick = closeAdmin;
     var ao = $('#adOut', root); if (ao) ao.onclick = function () { CL.logout(); cloudSubs = null; closeAdmin(); toast('로그아웃했어요.'); };
     $$('.ad-tabs button', root).forEach(function (b) { b.onclick = function () { tab = b.dataset.t; draw(); }; });
-    if (tab === 'prog') drawProg(); else if (tab === 'subs') drawSubs(); else drawBak();
+    if (tab === 'prog') drawProg(); else if (tab === 'subs') drawSubs(); else if (tab === 'stats' && CL) drawStats(); else drawBak();
   }
   function tabBtn(t, label) { return '<button type="button" role="tab" data-t="' + t + '" aria-selected="' + (tab === t) + '">' + label + '</button>'; }
 
@@ -190,6 +190,39 @@
       });
     };
     $('#fTitle', m).focus();
+  }
+
+
+  /* ---------- 문의 통계 (프로그램별 조회·문의 버튼 클릭·카톡·접수) ---------- */
+  var statRows = null, statPeriod = 'd30', statErr = '';
+  function loadStats() {
+    statErr = ''; CL.stats().then(function (r) { statRows = r || []; if (tab === 'stats') drawStats(); })
+      .catch(function (e) { if (e && e.status === 401) { CL.logout(); toast('로그인이 만료됐어요. 다시 로그인해 주세요.', true); closeAdmin(); return; } statRows = []; statErr = '통계를 불러오지 못했어요.'; if (tab === 'stats') drawStats(); });
+  }
+  function drawStats() {
+    var box = $('#adBody', root);
+    if (statRows === null) { box.innerHTML = '<div class="ad-head"><div><h2>문의 통계</h2><p>불러오는 중…</p></div></div>'; loadStats(); return; }
+    var P = A.getPrograms(), by = {};
+    P.forEach(function (p) { by[p.id] = { id: p.id, title: p.title, view: 0, inquiry: 0, kakao: 0, submit: 0 }; });
+    statRows.forEach(function (r) {
+      var o = by[r.program_id] || (by[r.program_id] = { id: r.program_id, title: r.program_title || '(삭제된/일반 문의)', view: 0, inquiry: 0, kakao: 0, submit: 0 });
+      o[r.kind] = (o[r.kind] || 0) + Number(r[statPeriod] || 0);
+    });
+    var list = Object.keys(by).map(function (k) { return by[k]; }).sort(function (x, y) { return (y.submit * 100 + y.inquiry * 10 + y.view) - (x.submit * 100 + x.inquiry * 10 + x.view); });
+    var T = { view: 0, inquiry: 0, kakao: 0, submit: 0 }; list.forEach(function (o) { for (var k in T) T[k] += o[k]; });
+    function pct(a, b) { return b ? (Math.round(a / b * 1000) / 10) + '%' : '-'; }
+    var rows = list.map(function (o) {
+      return '<tr><td><b>' + esc(o.title) + '</b></td><td>' + o.view + '</td><td>' + o.inquiry + '</td><td>' + o.kakao + '</td><td><b>' + o.submit + '</b></td><td>' + pct(o.inquiry + o.kakao, o.view) + '</td></tr>';
+    }).join('');
+    var lab = { d7: '최근 7일', d30: '최근 30일', total: '전체' };
+    box.innerHTML = '<div class="ad-head"><div><h2>문의 통계</h2><p>방문자가 각 프로그램에서 <b>상세페이지를 열고 → 문의·카톡 버튼을 누르고 → 문의서를 접수</b>한 횟수예요. 이 기능을 켠 이후부터 집계됩니다. 개인정보는 저장하지 않아요.' + (statErr ? ' <span style="color:#b91c1c">' + statErr + '</span>' : '') + '</p></div><div class="ad-hbtn">' +
+      '<select id="stP" aria-label="기간">' + Object.keys(lab).map(function (k) { return '<option value="' + k + '"' + (k === statPeriod ? ' selected' : '') + '>' + lab[k] + '</option>'; }).join('') + '</select>' +
+      '<button class="btn" type="button" id="stR">새로고침</button></div></div>' +
+      '<div class="st-cards"><div><span>상세페이지 조회</span><b>' + T.view + '</b></div><div><span>문의 버튼 클릭</span><b>' + T.inquiry + '</b></div><div><span>카톡 상담 클릭</span><b>' + T.kakao + '</b></div><div class="hl"><span>문의서 접수</span><b>' + T.submit + '</b></div></div>' +
+      '<div class="ad-tw"><table class="ad-t"><thead><tr><th>프로그램</th><th>조회</th><th>문의 클릭</th><th>카톡 클릭</th><th>접수</th><th>행동률*</th></tr></thead><tbody>' + (rows || '<tr><td colspan="6" class="ad-empty">아직 집계된 데이터가 없습니다.</td></tr>') + '</tbody></table></div>' +
+      '<p class="st-note">* 행동률 = (문의 클릭 + 카톡 클릭) ÷ 조회. 접수는 문의 폼이 정상 전송된 횟수이며, 실제 내용은 80284@naver.com 메일로 받으세요. 관리자로 로그인한 상태의 클릭은 집계하지 않습니다.</p>';
+    $('#stP', root).onchange = function (e) { statPeriod = e.target.value; drawStats(); };
+    $('#stR', root).onclick = function () { statRows = null; drawStats(); };
   }
 
   /* ---------- 구독자 표 ---------- */

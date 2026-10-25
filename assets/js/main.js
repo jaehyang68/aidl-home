@@ -296,7 +296,7 @@ $$('[data-video]').forEach(box => {
       '희망 과정': courses, '희망 일정': val('희망 일정') || '(미입력)', '문의 내용': val('문의 내용') || '(미입력)'
     };
     const payload = Object.assign({
-      _subject: `[AIDL 강의문의] ${data['기관·회사명']} · ${data['담당자']}`,
+      _subject: `[AIDL 강의문의] ${courses.length > 36 ? courses.slice(0, 35) + '…' : courses} · ${data['기관·회사명']} · ${data['담당자']}`,
       _template: 'table', _captcha: 'false', email: data['이메일'], name: data['담당자']
     }, data);
 
@@ -307,7 +307,7 @@ $$('[data-video]').forEach(box => {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(payload)
       });
       const j = await r.json().catch(() => ({}));
-      if (r.ok && (j.success === true || j.success === 'true') && !/activat/i.test(j.message || '')) show(true);
+      if (r.ok && (j.success === true || j.success === 'true') && !/activat/i.test(j.message || '')) { show(true); try { document.dispatchEvent(new CustomEvent('aidl:sent', { detail: { courses: $$('#coursePick input:checked').map(i => i.value) } })); } catch (_) {} }
       else { if (/activat/i.test(j.message || '')) console.warn('[AIDL] FormSubmit 활성화 메일(80284@naver.com)의 ACTIVATE FORM 버튼을 눌러 주세요.'); throw new Error(j.message || r.status); }
     } catch (err) {
       console.warn('[AIDL] form error', err);
@@ -368,7 +368,7 @@ $$('[data-video]').forEach(box => {
     setTimeout(function(){bub.innerHTML=MSG[k];bub.classList.remove('swap')},220);
   }
   x.addEventListener('click',function(){pet.classList.add('off');try{sessionStorage.setItem('petOff','1')}catch(e){}});
-  var secs=['home','robot','about','programs','result5','cases','lab','movie','media','contact'].map(function(i){return document.getElementById(i)}).filter(Boolean);
+  var secs=['home','robot','about','programs','result5','cases','reviews','lab','movie','media','contact'].map(function(i){return document.getElementById(i)}).filter(Boolean);
   if('IntersectionObserver' in window){
     var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){var id=en.target.id;say(id==='home'?'hero':id)}})},{rootMargin:'-40% 0px -50% 0px'});
     secs.forEach(function(e){io.observe(e)});
@@ -396,3 +396,10 @@ $$('[data-video]').forEach(box => {
     apply();
   });
 })();
+
+/* 수강 후기 더 보기 */
+(function(){var b=document.getElementById('revMore');if(!b)return;
+b.addEventListener('click',function(){var open=b.getAttribute('aria-expanded')==='true';
+document.querySelectorAll('.rmore').forEach(function(n){if(open)n.setAttribute('hidden','');else{n.removeAttribute('hidden');n.classList.add('in');}});
+b.setAttribute('aria-expanded',open?'false':'true');
+b.firstChild.nodeValue=open?'후기 더 보기 ':'후기 접기 ';});})();
