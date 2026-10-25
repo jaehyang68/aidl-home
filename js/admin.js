@@ -8,7 +8,9 @@
   var A = window.AIDL, esc = A.esc, CATS = A.CATS;
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return [].slice.call((r || document).querySelectorAll(s)); };
-  var root = null, tab = 'prog', q = '';
+  var root = null, tab = 'prog', q = '', CL = A.cloud, cloudSubs = null;
+  function loadCloudSubs() { if (!CL) return; CL.listSubs().then(function (l) { cloudSubs = l; if (root && !root.hidden) draw(); }).catch(function (e) { if (e && e.status === 401) { CL.logout(); toast('로그인이 만료되었어요. 다시 로그인해 주세요.', true); closeAdmin(); } }); }
+  function saveFail(r) { toast(r && r.login ? '로그인이 만료되었어요. 홈에서 다시 로그인해 주세요.' : '저장에 실패했어요. 인터넷 연결과 이미지 크기를 확인해 주세요.', true); }
 
   function kb(n) { return n > 1048576 ? (n / 1048576).toFixed(1) + 'MB' : Math.round(n / 1024) + 'KB'; }
   function fmt(d) { try { var t = new Date(d); return t.getFullYear() + '.' + ('0' + (t.getMonth() + 1)).slice(-2) + '.' + ('0' + t.getDate()).slice(-2) + ' ' + ('0' + t.getHours()).slice(-2) + ':' + ('0' + t.getMinutes()).slice(-2); } catch (e) { return ''; } }
@@ -41,9 +43,9 @@
 
   /* ---------- 화면 뼈대 ---------- */
   function openAdmin() {
-    if (root) { root.hidden = false; document.body.classList.add('ad-open'); draw(); return; }
+    if (root) { root.hidden = false; document.body.classList.add('ad-open'); draw(); loadCloudSubs(); return; }
     root = document.createElement('div'); root.id = 'adminRoot'; root.className = 'ad';
-    document.body.appendChild(root); document.body.classList.add('ad-open'); draw();
+    document.body.appendChild(root); document.body.classList.add('ad-open'); draw(); loadCloudSubs();
   }
   function closeAdmin() {
     if (root) root.hidden = true; document.body.classList.remove('ad-open');
@@ -51,13 +53,14 @@
     A.refresh();
   }
   function draw() {
-    var subs = A.subs();
+    var subs = CL ? (cloudSubs || []) : A.subs();
     root.innerHTML =
-      '<div class="ad-bar"><b>🛠 관리자 모드</b><span class="ad-note">여기서 바꾼 내용은 <u>이 브라우저</u>에 저장됩니다. 모든 방문자에게 보이려면 [백업·가져오기]에서 내려받은 파일을 올려 주세요.</span><button class="btn sm yellow" type="button" id="adHome">홈 화면으로 돌아가기</button></div>' +
+      '<div class="ad-bar"><b>🛠 관리자 모드</b>' + (CL ? '<span class="ad-note">☁ 클라우드에 연결됨 · 저장하면 <u>모든 방문자</u>에게 바로 보입니다. (' + esc(CL.email()) + ')</span><button class="btn sm" type="button" id="adOut">로그아웃</button>' : '<span class="ad-note">여기서 바꾼 내용은 <u>이 브라우저</u>에 저장됩니다. 모든 방문자에게 보이려면 [백업·가져오기]에서 내려받은 파일을 올려 주세요.</span>') + '<button class="btn sm yellow" type="button" id="adHome">홈 화면으로 돌아가기</button></div>' +
       '<div class="ad-in"><div class="ad-tabs" role="tablist">' +
       tabBtn('prog', '프로그램 관리 (' + A.getPrograms().length + ')') + tabBtn('subs', '뉴스레터 구독자 (' + subs.length + ')') + tabBtn('bak', '백업·가져오기') + '</div>' +
       '<div id="adBody"></div></div>';
     $('#adHome', root).onclick = closeAdmin;
+    var ao = $('#adOut', root); if (ao) ao.onclick = function () { CL.logout(); cloudSubs = null; closeAdmin(); toast('로그아웃했어요.'); };
     $$('.ad-tabs button', root).forEach(function (b) { b.onclick = function () { tab = b.dataset.t; draw(); }; });
     if (tab === 'prog') drawProg(); else if (tab === 'subs') drawSubs(); else drawBak();
   }
@@ -66,22 +69,23 @@
   /* ---------- 프로그램 관리 표 ---------- */
   function drawProg() {
     var list = A.getPrograms(), src = A.source();
-    var srcMsg = src === 'local' ? '이 브라우저에 저장된 목록을 쓰고 있어요.' : (src === 'published' ? '올려 둔 programs.json 을 보고 있어요. 수정하면 이 브라우저에만 저장됩니다.' : '기본(시작) 프로그램을 보고 있어요. 수정·등록하면 이 브라우저에 저장됩니다.');
+    var srcMsg = src === 'cloud' ? '☁ 클라우드에 저장된 목록이에요. 저장·삭제하면 모든 방문자 화면에 바로 반영됩니다.' : (CL ? '아직 클라우드에 올리지 않은 기본 프로그램이에요. [목록 클라우드에 올리기]를 누르면 지금 목록이 모든 방문자에게 보입니다.' : (src === 'local' ? '이 브라우저에 저장된 목록을 쓰고 있어요.' : (src === 'published' ? '올려 둔 programs.json 을 보고 있어요. 수정하면 이 브라우저에만 저장됩니다.' : '기본(시작) 프로그램을 보고 있어요. 수정·등록하면 이 브라우저에 저장됩니다.')));
     var rows = list.map(function (p, i) {
       var th = A.safeSrc(p.image) ? '<img src="' + esc(p.image) + '" alt="">' : '<span class="ad-noimg">없음</span>';
       return '<tr><td class="ad-th">' + th + '</td><td>' + esc((CATS[p.category] || {}).label || p.category) + '</td><td><b>' + esc(p.title) + '</b><br><small>' + esc(p.summary) + '</small></td><td>' + fmt(p.updatedAt || p.createdAt) + '</td>' +
         '<td class="ad-act"><button type="button" data-up="' + i + '" aria-label="위로" ' + (i === 0 ? 'disabled' : '') + '>▲</button><button type="button" data-dn="' + i + '" aria-label="아래로" ' + (i === list.length - 1 ? 'disabled' : '') + '>▼</button>' +
         '<button type="button" data-ed="' + i + '" aria-label="수정">✏️ 수정</button><button type="button" class="del" data-rm="' + i + '" aria-label="삭제">🗑 삭제</button></td></tr>';
     }).join('');
-    $('#adBody', root).innerHTML = '<div class="ad-head"><div><h2>프로그램 관리</h2><p>' + srcMsg + '</p></div><button class="btn primary" type="button" id="adNew">+ 새 프로그램 등록</button></div>' +
+    $('#adBody', root).innerHTML = '<div class="ad-head"><div><h2>프로그램 관리</h2><p>' + srcMsg + '</p></div><div class="ad-hbtn">' + (CL && src !== 'cloud' ? '<button class="btn" type="button" id="adUp">목록 클라우드에 올리기</button>' : '') + '<button class="btn primary" type="button" id="adNew">+ 새 프로그램 등록</button></div></div>' +
       '<div class="ad-tw"><table class="ad-t"><thead><tr><th>이미지</th><th>분류</th><th>프로그램</th><th>수정일</th><th>관리</th></tr></thead><tbody>' + (rows || '<tr><td colspan="5" class="ad-empty">등록된 프로그램이 없습니다.</td></tr>') + '</tbody></table></div>';
     $('#adNew', root).onclick = function () { editor(null); };
+    var au = $('#adUp', root); if (au) au.onclick = function () { au.disabled = true; au.textContent = '올리는 중…'; A.savePrograms(A.getPrograms()).then(function (r) { if (r.ok) toast('클라우드에 올렸어요. 이제 모든 방문자에게 보입니다.'); else saveFail(r); draw(); }); };
     $('#adBody', root).onclick = function (e) {
       var b = e.target.closest('button'); if (!b) return;
       var l = A.getPrograms(), d = b.dataset;
       if (d.ed != null) return editor(l[+d.ed]);
-      if (d.rm != null) { if (!confirm('"' + l[+d.rm].title + '" 프로그램을 삭제할까요?')) return; l.splice(+d.rm, 1); var r = A.savePrograms(l); if (!r.ok) toast('저장에 실패했어요.', true); else toast('삭제했어요.'); return draw(); }
-      if (d.up != null || d.dn != null) { var i = +(d.up != null ? d.up : d.dn), j = d.up != null ? i - 1 : i + 1; var t = l[i]; l[i] = l[j]; l[j] = t; A.savePrograms(l); draw(); }
+      if (d.rm != null) { if (!confirm('"' + l[+d.rm].title + '" 프로그램을 삭제할까요?')) return; l.splice(+d.rm, 1); return A.savePrograms(l).then(function (r) { if (!r.ok) saveFail(r); else toast('삭제했어요.'); draw(); }); }
+      if (d.up != null || d.dn != null) { var i = +(d.up != null ? d.up : d.dn), j = d.up != null ? i - 1 : i + 1; var t = l[i]; l[i] = l[j]; l[j] = t; A.savePrograms(l).then(function (r) { if (!r.ok) saveFail(r); draw(); }); }
     };
   }
 
@@ -176,27 +180,32 @@
       };
       var l = A.getPrograms(), i = l.map(function (x) { return x.id; }).indexOf(p.id);
       if (i >= 0) l[i] = np; else l.push(np);
-      var r = A.savePrograms(l);
-      if (!r.ok) { err.textContent = '저장 공간이 부족합니다. 이미지를 줄이거나, [백업·가져오기]에서 내려받은 뒤 오래된 프로그램을 삭제해 주세요.'; return; }
-      close(); toast(isNew ? '등록했어요. 홈 화면에 바로 진열됩니다.' : '수정했어요.'); draw();
+      var sb = $('#edSave', m); sb.disabled = true; sb.textContent = CL ? '올리는 중…' : '저장 중…'; err.textContent = '';
+      A.savePrograms(l).then(function (r) {
+        sb.disabled = false; sb.textContent = '저장하기';
+        if (!r.ok) { err.textContent = r.login ? '로그인이 만료되었어요. 편집 내용을 복사해 두고 홈에서 다시 로그인해 주세요.' : (CL ? '저장에 실패했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.' : '저장 공간이 부족합니다. 이미지를 줄이거나, [백업·가져오기]에서 내려받은 뒤 오래된 프로그램을 삭제해 주세요.'); return; }
+        close(); toast(isNew ? '등록했어요. 홈 화면에 바로 진열됩니다.' : '수정했어요.'); draw();
+      });
     };
     $('#fTitle', m).focus();
   }
 
   /* ---------- 구독자 표 ---------- */
   function drawSubs() {
-    var all = A.subs(), l = all.filter(function (s) { var t = (s.name + s.phone + s.email).toLowerCase(); return !q || t.indexOf(q.toLowerCase()) >= 0; });
+    var all = CL ? (cloudSubs || []) : A.subs(), l = all.filter(function (s) { var t = (s.name + s.phone + s.email).toLowerCase(); return !q || t.indexOf(q.toLowerCase()) >= 0; });
     var rows = l.map(function (s) {
       return '<tr><td>' + esc(s.name) + '</td><td>' + esc(s.phone) + '</td><td>' + esc(s.email) + '</td><td>' + fmt(s.createdAt) + '</td><td class="ad-act"><button type="button" class="del" data-id="' + esc(s.id) + '">🗑 삭제</button></td></tr>';
     }).join('');
-    $('#adBody', root).innerHTML = '<div class="ad-head"><div><h2>뉴스레터 구독자 (' + all.length + '명)</h2><p>이 브라우저에 신청된 구독자만 보입니다. 다른 사람의 브라우저에서 신청한 내용은 <b>80284@naver.com 메일</b>로 도착합니다.</p></div><div class="ad-hbtn"><input id="adQ" type="search" placeholder="이름·전화·이메일 검색" value="' + esc(q) + '"><button class="btn sm" type="button" id="adCsv">CSV 내려받기</button></div></div>' +
+    $('#adBody', root).innerHTML = '<div class="ad-head"><div><h2>뉴스레터 구독자 (' + all.length + '명)</h2><p>' + (CL ? (cloudSubs ? '☁ 클라우드에 모인 모든 구독자예요. 신청 알림은 80284@naver.com 메일로도 도착합니다.' : '불러오는 중…') : '이 브라우저에 신청된 구독자만 보입니다. 다른 사람의 브라우저에서 신청한 내용은 <b>80284@naver.com 메일</b>로 도착합니다.') + '</p></div><div class="ad-hbtn"><input id="adQ" type="search" placeholder="이름·전화·이메일 검색" value="' + esc(q) + '"><button class="btn sm" type="button" id="adCsv">CSV 내려받기</button></div></div>' +
       '<div class="ad-tw"><table class="ad-t"><thead><tr><th>이름</th><th>전화번호</th><th>이메일</th><th>신청일시</th><th>관리</th></tr></thead><tbody>' + (rows || '<tr><td colspan="5" class="ad-empty">구독자가 없습니다.</td></tr>') + '</tbody></table></div>';
     $('#adQ', root).oninput = function (e) { q = e.target.value; var pos = e.target.selectionStart; drawSubs(); var n = $('#adQ', root); n.focus(); n.setSelectionRange(pos, pos); };
     $('#adCsv', root).onclick = function () {
       var csv = '﻿이름,전화번호,이메일,신청일시\r\n' + all.map(function (s) { return [s.name, s.phone, s.email, fmt(s.createdAt)].map(function (v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(','); }).join('\r\n');
       download('aidl-subscribers-' + new Date().toISOString().slice(0, 10) + '.csv', csv, 'text/csv;charset=utf-8');
     };
-    $('#adBody', root).onclick = function (e) { var b = e.target.closest('[data-id]'); if (!b) return; if (!confirm('이 구독자를 삭제할까요?')) return; A.saveSubs(A.subs().filter(function (s) { return s.id !== b.dataset.id; })); toast('삭제했어요.'); draw(); };
+    $('#adBody', root).onclick = function (e) { var b = e.target.closest('[data-id]'); if (!b) return; if (!confirm('이 구독자를 삭제할까요?')) return;
+      if (CL) { CL.delSub(b.dataset.id).then(function () { cloudSubs = cloudSubs.filter(function (s) { return s.id !== b.dataset.id; }); toast('삭제했어요.'); draw(); }).catch(function () { toast('삭제에 실패했어요.', true); }); return; }
+      A.saveSubs(A.subs().filter(function (s) { return s.id !== b.dataset.id; })); toast('삭제했어요.'); draw(); };
   }
 
   /* ---------- 백업·가져오기 ---------- */
@@ -207,9 +216,9 @@
     var u = A.usage(), pct = Math.min(100, Math.round(u / (5 * 1024 * 1024) * 100));
     $('#adBody', root).innerHTML = '<div class="ad-head"><div><h2>백업·가져오기</h2><p>모든 방문자에게 보이게 하는 방법: ① [프로그램 내보내기] → ② 내려받은 파일 이름을 <b>programs.json</b>으로 → ③ GitHub의 <b>assets/data</b> 폴더에 올리기(덮어쓰기).</p></div></div>' +
       '<div class="ad-cards"><div class="ad-card"><h3>저장 공간</h3><div class="ad-meter"><i style="width:' + pct + '%"></i></div><p>' + kb(u) + ' 사용 중 (약 5MB 중 ' + pct + '%)</p></div>' +
-      '<div class="ad-card"><h3>프로그램</h3><button class="btn primary" type="button" id="bkExp">프로그램 내보내기 (programs.json)</button><label class="btn" style="margin-top:10px">프로그램 가져오기<input type="file" id="bkImp" accept="application/json,.json" hidden></label><button class="btn sm" type="button" id="bkReset" style="margin-top:10px">기본 프로그램으로 되돌리기</button></div>' +
+      '<div class="ad-card"><h3>프로그램</h3><button class="btn primary" type="button" id="bkExp">프로그램 내보내기 (programs.json)</button><label class="btn" style="margin-top:10px">프로그램 가져오기<input type="file" id="bkImp" accept="application/json,.json" hidden></label>' + (CL ? '' : '<button class="btn sm" type="button" id="bkReset" style="margin-top:10px">기본 프로그램으로 되돌리기</button>') + '</div>' +
       '<div class="ad-card"><h3>구독자</h3><button class="btn" type="button" id="bkSub">구독자 JSON 내려받기</button><p style="margin-top:8px">엑셀용은 [뉴스레터 구독자] 탭의 CSV를 쓰세요.</p></div>' +
-      '<div class="ad-card"><h3>관리자 PIN</h3><button class="btn sm" type="button" id="bkPin">PIN 다시 설정하기</button><p style="margin-top:8px">누르면 현재 PIN이 지워지고, 다음에 들어갈 때 새로 정합니다.</p></div></div>';
+      '' + (CL ? '<div class="ad-card"><h3>클라우드</h3><p>프로그램·이미지·구독자가 Supabase에 저장되고 있어요. 이 파일 내보내기는 <b>백업용</b>이에요. 비밀번호 변경은 Supabase 대시보드의 Authentication → Users에서 합니다.</p></div>' : '<div class="ad-card"><h3>관리자 PIN</h3><button class="btn sm" type="button" id="bkPin">PIN 다시 설정하기</button><p style="margin-top:8px">누르면 현재 PIN이 지워지고, 다음에 들어갈 때 새로 정합니다.</p></div>') + '</div>';
     $('#bkExp', root).onclick = function () { download('programs.json', JSON.stringify({ version: 1, exportedAt: new Date().toISOString(), programs: A.getPrograms() }, null, 1), 'application/json'); toast('programs.json 을 내려받았어요.'); };
     $('#bkImp', root).onchange = function (e) {
       var f = e.target.files[0]; if (!f) return; var r = new FileReader();
@@ -217,15 +226,14 @@
         try { var j = JSON.parse(r.result); if (!j || !Array.isArray(j.programs)) throw 0;
           var ok = j.programs.every(function (p) { return p && p.id && p.title; }); if (!ok) throw 0;
           if (!confirm('프로그램 ' + j.programs.length + '개를 가져와 현재 목록을 바꿀까요?')) return;
-          var res = A.savePrograms(j.programs.map(function (p) { p.bodyHtml = A.sanitize(p.bodyHtml); p.image = A.safeSrc(p.image); return p; }));
-          toast(res.ok ? '가져왔어요.' : '저장 공간이 부족합니다.', !res.ok); draw();
+          A.savePrograms(j.programs.map(function (p) { p.bodyHtml = A.sanitize(p.bodyHtml); p.image = A.safeSrc(p.image); return p; })).then(function (res) { if (res.ok) toast('가져왔어요.'); else saveFail(res); draw(); });
         } catch (x) { toast('올바른 programs.json 파일이 아니에요.', true); }
       };
       r.readAsText(f);
     };
-    $('#bkReset', root).onclick = function () { if (!confirm('이 브라우저에 저장한 프로그램을 지우고 기본 목록으로 되돌릴까요? (구독자는 그대로)')) return; try { localStorage.removeItem(A.KEYS.programs); } catch (x) {} location.reload(); };
-    $('#bkSub', root).onclick = function () { download('subscribers.json', JSON.stringify(A.subs(), null, 1), 'application/json'); };
-    $('#bkPin', root).onclick = function () { if (!confirm('PIN을 지우고 새로 정할까요?')) return; try { localStorage.removeItem(A.KEYS.pin); sessionStorage.removeItem('aidl_admin_ok'); } catch (x) {} closeAdmin(); toast('PIN을 지웠어요. 다음에 들어갈 때 새로 정합니다.'); };
+    var br = $('#bkReset', root); if (br) br.onclick = function () { if (!confirm('이 브라우저에 저장한 프로그램을 지우고 기본 목록으로 되돌릴까요? (구독자는 그대로)')) return; try { localStorage.removeItem(A.KEYS.programs); } catch (x) {} location.reload(); };
+    $('#bkSub', root).onclick = function () { download('subscribers.json', JSON.stringify(CL ? (cloudSubs || []) : A.subs(), null, 1), 'application/json'); };
+    var bp = $('#bkPin', root); if (bp) bp.onclick = function () { if (!confirm('PIN을 지우고 새로 정할까요?')) return; try { localStorage.removeItem(A.KEYS.pin); sessionStorage.removeItem('aidl_admin_ok'); } catch (x) {} closeAdmin(); toast('PIN을 지웠어요. 다음에 들어갈 때 새로 정합니다.'); };
   }
 
   A.openAdmin = openAdmin;
