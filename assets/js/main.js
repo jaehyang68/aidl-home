@@ -187,20 +187,7 @@ $$('[data-video]').forEach(box => {
   });
 });
 
-/* 8) 프로그램 필터 · 문의 과정 자동 선택 -------------------------- */
-(() => {
-  const btns = $$('.filters button'), cards = $$('#progGrid .prog');
-  btns.forEach(b => b.addEventListener('click', () => {
-    btns.forEach(x => x.setAttribute('aria-pressed', x === b));
-    cards.forEach(c => { c.hidden = b.dataset.f !== 'all' && c.dataset.g !== b.dataset.f; });
-  }));
-  document.addEventListener('click', e => {
-    const t = e.target.closest('[data-course]'); if (!t) return;
-    const cb = $$('#coursePick input').find(i => i.value === t.dataset.course);
-    if (cb) cb.checked = true;
-    if (t.tagName === 'BUTTON') $('#contact').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
-  });
-})();
+/* 8) 프로그램 진열·필터·문의 과정 자동 선택은 assets/js/shop.js 에서 처리합니다 ----- */
 
 /* 9) JH RESULT 5 스텝퍼 ------------------------------------------------ */
 (() => {
