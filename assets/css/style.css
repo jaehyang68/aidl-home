@@ -649,3 +649,22 @@ body.pd-open{overflow:hidden}
 .kit figure{max-width:1100px;margin:0 auto;border:2px solid var(--bd);border-radius:18px;overflow:hidden;box-shadow:var(--sh)}
 .kit img{width:100%;height:auto}
 .kit-cta{text-align:center;margin-top:26px}
+
+/* 이미지 배너 테두리: 이미지의 라벤더·민트 톤에 맞춘 그라데이션 링 */
+.showcase,.kit figure{border:0;padding:4px;border-radius:28px;overflow:visible;
+  background:linear-gradient(135deg,#8B7CF6 0%,#6FD3C4 50%,#A78BFA 100%);
+  box-shadow:0 10px 30px rgba(139,124,246,.28),0 2px 6px rgba(15,23,42,.08)}
+.showcase:hover{transform:translateY(-3px);box-shadow:0 16px 38px rgba(139,124,246,.38),0 2px 6px rgba(15,23,42,.08)}
+.showcase img,.kit img{border-radius:24px;background:#fff}
+@media(max-width:640px){.showcase,.kit figure{padding:3px;border-radius:20px}.showcase img,.kit img{border-radius:17px}}
+
+/* 상단 메뉴 관리자 링크 */
+.nav-admin{font-size:13px!important;font-weight:700;color:var(--muted)!important;border:1.5px solid var(--line);border-radius:999px;padding:5px 11px!important;white-space:nowrap}
+.nav-admin:hover{color:var(--navy)!important;border-color:var(--navy);background:#fff}
+@media(min-width:981px) and (max-width:1380px){
+  .nav a{font-size:13.5px;padding:8px 7px}
+  .nav a.cta{padding:8px 13px;margin-left:4px}
+  .nav-sub{padding:5px 11px!important}
+  .nav-admin{padding:5px 9px!important}
+  .brand span small{letter-spacing:0;font-size:10px}
+}

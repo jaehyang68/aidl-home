@@ -104,6 +104,16 @@
 
   var cache = { list: null, source: 'seed' };
   function load(cb) {
+    var C = window.AIDLC;
+    if (C && C.enabled) {   // 클라우드(Supabase)에서 먼저 읽기. 실패하거나 비어 있으면 기존 방식으로.
+      return C.list().then(function (l) {
+        if (l && l.length) { cache = { list: l, source: 'cloud' }; return cb(cache.list); }
+        loadLocal(cb);
+      }).catch(function () { loadLocal(cb); });
+    }
+    loadLocal(cb);
+  }
+  function loadLocal(cb) {
     var local = read(KP, null);
     if (local && Array.isArray(local.programs)) { cache = { list: local.programs, source: 'local' }; return cb(cache.list); }
     var seed = buildSeed();
@@ -114,7 +124,33 @@
       cb(cache.list);
     }).catch(function () { cache = { list: seed, source: 'seed' }; cb(seed); });
   }
-  function savePrograms(list) { var r = write(KP, { version: 1, savedAt: new Date().toISOString(), programs: list }); if (r.ok) { cache = { list: list, source: 'local' }; render(); } return r; }
+  /* 저장 결과는 항상 Promise({ok}) 로 돌려줍니다. 관리자 로그인 상태면 Supabase 에, 아니면 이 브라우저에 저장합니다. */
+  function upData(html, C, memo) {
+    var urls = String(html || '').match(/src="data:image\/[a-z]+;base64,[A-Za-z0-9+\/=]+"/g) || [];
+    return urls.reduce(function (pr, u) {
+      return pr.then(function (h) {
+        var d = u.slice(5, -1);
+        return (memo[d] ? Promise.resolve(memo[d]) : C.upload(d).then(function (x) { memo[d] = x; return x; })).then(function (x) { return h.split(u).join('src="' + x + '"'); });
+      });
+    }, Promise.resolve(html));
+  }
+  function savePrograms(list) {
+    var C = window.AIDLC;
+    if (C && C.enabled && C.loggedIn()) {
+      var memo = {}, out = [];
+      return list.reduce(function (pr, p) {
+        return pr.then(function () {
+          var q = JSON.parse(JSON.stringify(p));
+          var a = /^data:image\//.test(q.image || '') ? (memo[q.image] ? Promise.resolve(memo[q.image]) : C.upload(q.image).then(function (x) { memo[q.image] = x; return x; })) : Promise.resolve(q.image);
+          return a.then(function (x) { q.image = x; return upData(q.bodyHtml, C, memo); }).then(function (h) { q.bodyHtml = h; out.push(q); });
+        });
+      }, Promise.resolve()).then(function () { return C.saveAll(out); }).then(function () {
+        cache = { list: out, source: 'cloud' }; render(); return { ok: true };
+      }).catch(function (e) { return { ok: false, error: e, login: e && e.status === 401 }; });
+    }
+    var r = write(KP, { version: 1, savedAt: new Date().toISOString(), programs: list }); if (r.ok) { cache = { list: list, source: 'local' }; render(); }
+    return Promise.resolve(r);
+  }
   function getPrograms() { return (cache.list || buildSeed()).slice(); }
 
   /* ---------- 고객 화면 : 카드 진열 ---------- */
@@ -287,16 +323,23 @@
       if (digits.length < 9 || digits.length > 11) return fail('전화번호를 정확히 입력해 주세요.', 'phone');
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return fail('이메일 주소 형식을 확인해 주세요.', 'email');
       if (!f.elements.agree.checked) return fail('개인정보 수집·이용에 동의해 주세요.', 'agree');
+      var C = window.AIDLC, cloudOn = !!(C && C.enabled && !cfg.PREVIEW);
       var list = subs();
       if (list.some(function (s) { return s.email.toLowerCase() === email.toLowerCase(); })) return fail('이미 구독 중인 이메일입니다.', 'email');
       var rec = { id: uid(), name: name, phone: phone, email: email, agreedAt: new Date().toISOString(), createdAt: new Date().toISOString(), mailed: false };
-      list.push(rec); var sv = saveSubs(list);
       var btn = $('.nl-go', box); btn.disabled = true; btn.textContent = '구독 처리 중…';
-      sendToSheet(rec);
-      sendMail(rec).then(function () { rec.mailed = true; return true; }).catch(function () { return false; }).then(function (okMail) {
-        if (okMail) { var l2 = subs(); l2.forEach(function (s) { if (s.id === rec.id) s.mailed = true; }); saveSubs(l2); }
-        $('.aidl-modal-box', box).innerHTML = '<button class="aidl-x" type="button" aria-label="닫기" data-x>×</button><div class="nl-form nl-done"><span class="nl-ico ok">✓</span><h3>구독이 완료되었습니다!</h3><p class="nl-sub">' + esc(name) + '님, 신청해 주셔서 감사합니다.' + (okMail ? '' : '<br><small>메일 전송은 잠시 후 다시 시도됩니다.</small>') + (sv.ok ? '' : '<br><small>이 브라우저의 저장 공간이 부족해 일부만 저장되었어요.</small>') + '</p><button class="btn primary" type="button" data-x>확인</button></div>';
+      var cloud = cloudOn ? C.addSub(rec).then(function () { return 'ok'; }).catch(function (e) { return e && e.dup ? 'dup' : 'fail'; }) : Promise.resolve('off');
+      cloud.then(function (cr) {
+        if (cr === 'dup') { btn.disabled = false; btn.textContent = '무료로 즉시 구독하기'; return fail('이미 구독 중인 이메일입니다.', 'email'); }
+        var sv = { ok: true };
+        if (cr !== 'ok') { list.push(rec); sv = saveSubs(list); }   // 클라우드 저장이 안 될 때만 이 브라우저에 보관
+        sendToSheet(rec);
+        return sendMail(rec).then(function () { rec.mailed = true; return true; }).catch(function () { return false; }).then(function (okMail) { done(okMail, cr, sv); });
       });
+      function done(okMail, cr, sv) {
+        if (okMail) { var l2 = subs(); l2.forEach(function (s) { if (s.id === rec.id) s.mailed = true; }); saveSubs(l2); }
+        $('.aidl-modal-box', box).innerHTML = '<button class="aidl-x" type="button" aria-label="닫기" data-x>×</button><div class="nl-form nl-done"><span class="nl-ico ok">✓</span><h3>구독이 완료되었습니다!</h3><p class="nl-sub">' + esc(name) + '님, 신청해 주셔서 감사합니다.' + ((okMail || cr === 'ok') ? '' : '<br><small>메일 전송은 잠시 후 다시 시도됩니다.</small>') + (sv.ok ? '' : '<br><small>이 브라우저의 저장 공간이 부족해 일부만 저장되었어요.</small>') + '</p><button class="btn primary" type="button" data-x>확인</button></div>';
+      }
       function fail(msg, field) { err.textContent = msg; f.elements[field].focus(); }
     });
   }
@@ -320,7 +363,31 @@
     s.onerror = function () { adminLoaded = false; alert('관리자 화면을 불러오지 못했습니다. assets/js/admin.js 파일이 올라가 있는지 확인해 주세요.'); };
     document.body.appendChild(s);
   }
+  /* 클라우드 연결 시: 이메일·비밀번호 로그인(Supabase) */
+  function cloudLogin() {
+    var C = window.AIDLC;
+    if (C.loggedIn()) return loadAdmin();
+    var m = modal('pinModal',
+      '<button class="aidl-x" type="button" aria-label="닫기" data-x>×</button><div class="nl-form"><span class="nl-ico">🛠</span><h3>관리자 로그인</h3>' +
+      '<p class="nl-sub">관리자 이메일과 비밀번호를 입력해 주세요.</p>' +
+      '<form id="pinForm"><label>이메일<input name="email" type="email" autocomplete="username" required></label>' +
+      '<label>비밀번호<input name="pw" type="password" autocomplete="current-password" required></label>' +
+      '<p class="nl-err" id="pinErr" role="alert"></p><button class="btn primary nl-go" type="submit">로그인</button></form></div>',
+      function () { if (location.hash === '#admin') history.replaceState(null, '', location.pathname + location.search); });
+    m.el.addEventListener('click', function (e) { if (e.target.closest('[data-x]')) m.close(); });
+    $('#pinForm', m.el).addEventListener('submit', function (e) {
+      e.preventDefault(); var f = e.target, err = $('#pinErr', m.el), btn = $('.nl-go', m.el);
+      var em = f.elements.email.value.trim(), pw = f.elements.pw.value;
+      if (!em || !pw) { err.textContent = '이메일과 비밀번호를 입력해 주세요.'; return; }
+      btn.disabled = true; btn.textContent = '확인 중…'; err.textContent = '';
+      C.login(em, pw).then(function () { m.close(); setTimeout(loadAdmin, 220); }).catch(function (x) {
+        btn.disabled = false; btn.textContent = '로그인';
+        err.textContent = (x && (x.status === 400 || x.status === 401 || x.status === 422)) ? '이메일 또는 비밀번호가 맞지 않습니다.' : (x && x.status === 429 ? '시도가 너무 많습니다. 잠시 후 다시 해 주세요.' : '연결에 실패했어요. 인터넷 연결을 확인해 주세요.');
+      });
+    });
+  }
   function requestAdmin() {
+    if (window.AIDLC && AIDLC.enabled && !cfg.PREVIEW) return cloudLogin();
     try { if (sessionStorage.getItem('aidl_admin_ok') === '1') return loadAdmin(); } catch (e) {}
     var rec = read(KA, null), setup = !rec;
     var lock = 0; try { lock = +sessionStorage.getItem('aidl_pin_lock') || 0; } catch (e) {}
@@ -359,7 +426,7 @@
   window.AIDL = window.AIDL || {};
   AIDL.CATS = CATS; AIDL.esc = esc; AIDL.read = read; AIDL.write = write; AIDL.usage = usage; AIDL.safeSrc = safeSrc; AIDL.uid = uid;
   AIDL.sanitize = sanitize; AIDL.getPrograms = getPrograms; AIDL.savePrograms = savePrograms; AIDL.source = function () { return cache.source; };
-  AIDL.subs = subs; AIDL.saveSubs = saveSubs; AIDL.modal = modal; AIDL.refresh = render; AIDL.seed = buildSeed; AIDL.KEYS = { programs: KP, subscribers: KS, pin: KA };
+  AIDL.subs = subs; AIDL.saveSubs = saveSubs; AIDL.modal = modal; AIDL.cloud = (window.AIDLC && AIDLC.enabled && !cfg.PREVIEW) ? window.AIDLC : null; AIDL.refresh = render; AIDL.seed = buildSeed; AIDL.KEYS = { programs: KP, subscribers: KS, pin: KA };
 
   /* 시작 */
   buildSeed();
