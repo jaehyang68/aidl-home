@@ -138,7 +138,10 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 (() => {
   const btn = $('#speakBtn'), bubble = $('#bubble'), stage = $('#stage'), note = $('#voiceNote');
   const label = (on) => `<svg class="i"><use href="#i-${on ? 'x' : 'vol'}"/></svg><span>${on ? '말하기 멈춤' : '로봇 인사 듣기'}</span>`;
-  if (!('speechSynthesis' in window)) { btn.disabled = true; btn.querySelector('span').textContent = '이 브라우저는 음성을 지원하지 않아요'; return; }
+  const hasTTS = 'speechSynthesis' in window;
+  // 녹음/제작한 음성 파일(assets/audio/robot-greeting.mp3)이 있으면 모든 휴대폰·앱 내 브라우저에서 이 파일을 재생합니다.
+  let audioOK = false, audio = null;
+  if (window.fetch && location.protocol !== 'file:') fetch('assets/audio/robot-greeting.mp3', { method: 'HEAD' }).then(r => { audioOK = r.ok; }).catch(() => {});
   const LINES = [
     '안녕하세요! 인공지능디지털연구소 로봇 비서, 넥스봇입니다.',
     '저를 마우스로 끌어서 돌려 보세요.',
@@ -146,13 +149,13 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     '강의 문의는 아래 버튼을 눌러 주세요. 감사합니다!'
   ];
   let voices = [], on = false, token = 0, v0 = null;
-  const loadVoices = () => { try { voices = speechSynthesis.getVoices() || []; } catch (e) { voices = []; } };
+  const loadVoices = () => { if (!hasTTS) return; try { voices = speechSynthesis.getVoices() || []; } catch (e) { voices = []; } };
   loadVoices();
-  if (speechSynthesis.addEventListener) speechSynthesis.addEventListener('voiceschanged', loadVoices);
+  if (hasTTS && speechSynthesis.addEventListener) speechSynthesis.addEventListener('voiceschanged', loadVoices);
   setTimeout(loadVoices, 500); setTimeout(loadVoices, 1500);   // 모바일은 음성 목록이 늦게 올라옵니다
   const pick = () => voices.find(v => /^ko/i.test(v.lang) && /google|natural|online|sun|hye|seo|yuna/i.test(v.name)) || voices.find(v => /^ko[-_]?/i.test(v.lang));
   const finish = () => { on = false; document.body.dataset.speaking = '0'; stage.classList.remove('speaking'); btn.innerHTML = label(false); };
-  function stop() { token++; try { speechSynthesis.cancel(); } catch (e) {} finish(); }
+  function stop() { token++; try { if (hasTTS) speechSynthesis.cancel(); if (audio) audio.pause(); } catch (e) {} clearTimeout(tx); finish(); }
   function say(i, my) {
     if (my !== token) return;
     if (i >= LINES.length) { finish(); return; }
@@ -164,7 +167,29 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     // 일부 모바일 브라우저는 onend를 보내지 않아 안전장치를 둡니다
     setTimeout(go, 1500 + LINES[i].length * 260);
   }
+  let tx = 0;
+  function textOnly(i, my) {   // 음성을 쓸 수 없는 브라우저: 말풍선 글로만 안내 (로봇을 가리지 않음)
+    if (my !== token) return;
+    if (i >= LINES.length) { finish(); return; }
+    bubble.textContent = LINES[i]; tx = setTimeout(() => textOnly(i + 1, my), 2600);
+  }
+  function playAudio() {
+    if (!audio) {
+      audio = new Audio('assets/audio/robot-greeting.mp3'); audio.preload = 'auto';
+      audio.addEventListener('timeupdate', () => { if (!audio.duration) return; const LEAD = 1.1, r = Math.max(0, audio.currentTime - LEAD) / Math.max(1, audio.duration - LEAD), tot = LINES.join('').length; let acc = 0, i = 0; for (; i < LINES.length - 1; i++) { acc += LINES[i].length / tot; if (r < acc) break; } if (bubble.textContent !== LINES[i]) bubble.textContent = LINES[i]; });
+      audio.addEventListener('ended', () => finish());
+    }
+    audio.currentTime = 0; on = true; const my = ++token; document.body.dataset.speaking = '1'; stage.classList.add('speaking'); btn.innerHTML = label(true);
+    const p = audio.play();
+    if (p && p.catch) p.catch(() => { audioOK = false; stop(); speak(); });
+  }
   function speak() {
+    if (audioOK) return playAudio();
+    if (!hasTTS) {
+      on = true; const my = ++token; document.body.dataset.speaking = '1'; stage.classList.add('speaking'); btn.innerHTML = label(true);
+      note.textContent = '이 브라우저는 음성을 지원하지 않아 말풍선 글로 안내해 드려요. 소리로 들으시려면 크롬·사파리 앱에서 열어 주세요.';
+      return textOnly(0, my);
+    }
     // iOS/안드로이드는 '버튼을 누른 그 순간'에 바로 말하기를 시작해야 소리가 납니다 → 지연(setTimeout) 없이 호출
     loadVoices(); v0 = pick();
     if (speechSynthesis.speaking || speechSynthesis.pending) speechSynthesis.cancel();
@@ -175,7 +200,7 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
   btn.addEventListener('click', () => (on ? stop() : speak()));
   document.addEventListener('visibilitychange', () => { if (document.hidden && on) stop(); });
-  addEventListener('pagehide', () => speechSynthesis.cancel());
+  addEventListener('pagehide', () => { try { if (hasTTS) speechSynthesis.cancel(); if (audio) audio.pause(); } catch (e) {} });
 })();
 
 /* 7) 소개/AI LAB 영상 재생 버튼 --------------------------------------- */
@@ -187,20 +212,7 @@ $$('[data-video]').forEach(box => {
   });
 });
 
-/* 8) 프로그램 필터 · 문의 과정 자동 선택 -------------------------- */
-(() => {
-  const btns = $$('.filters button'), cards = $$('#progGrid .prog');
-  btns.forEach(b => b.addEventListener('click', () => {
-    btns.forEach(x => x.setAttribute('aria-pressed', x === b));
-    cards.forEach(c => { c.hidden = b.dataset.f !== 'all' && c.dataset.g !== b.dataset.f; });
-  }));
-  document.addEventListener('click', e => {
-    const t = e.target.closest('[data-course]'); if (!t) return;
-    const cb = $$('#coursePick input').find(i => i.value === t.dataset.course);
-    if (cb) cb.checked = true;
-    if (t.tagName === 'BUTTON') $('#contact').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
-  });
-})();
+/* 8) 프로그램 진열·필터·문의 과정 자동 선택은 assets/js/shop.js 에서 처리합니다 ----- */
 
 /* 9) JH RESULT 5 스텝퍼 ------------------------------------------------ */
 (() => {
@@ -295,7 +307,7 @@ $$('[data-video]').forEach(box => {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(payload)
       });
       const j = await r.json().catch(() => ({}));
-      if (r.ok && (j.success === true || j.success === 'true') && !/activat/i.test(j.message || '')) show(true);
+      if (r.ok && (j.success === true || j.success === 'true') && !/activat/i.test(j.message || '')) { show(true); try { document.dispatchEvent(new CustomEvent('aidl:sent', { detail: { courses: $$('#coursePick input:checked').map(i => i.value) } })); } catch (_) {} }
       else { if (/activat/i.test(j.message || '')) console.warn('[AIDL] FormSubmit 활성화 메일(80284@naver.com)의 ACTIVATE FORM 버튼을 눌러 주세요.'); throw new Error(j.message || r.status); }
     } catch (err) {
       console.warn('[AIDL] form error', err);

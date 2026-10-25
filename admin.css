@@ -72,3 +72,12 @@ body.ad-modal-open{overflow:hidden}
   .ad-bar .ad-note{display:none}
 }
 .ad-ed .ad-body.pbody{border:0;box-shadow:none;border-radius:0;margin:0;background:#fff;max-width:none}
+
+/* 관리자 문의 통계 */
+.st-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 18px}
+.st-cards>div{border:2px solid var(--navy);border-radius:14px;background:#fff;padding:14px 16px;display:grid;gap:4px}
+.st-cards span{font-size:14px;color:#475569}.st-cards b{font-size:30px;color:var(--navy);letter-spacing:-.02em}
+.st-cards .hl{background:linear-gradient(135deg,#EEF2FF,#E6FBF6);box-shadow:4px 4px 0 var(--cobalt)}
+.st-note{margin-top:12px;font-size:14px;color:#475569;line-height:1.6}
+#stP{border:2px solid var(--navy);border-radius:10px;padding:8px 10px;font:inherit;background:#fff}
+@media(max-width:700px){.st-cards{grid-template-columns:1fr 1fr}}
