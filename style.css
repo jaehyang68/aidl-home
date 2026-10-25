@@ -716,3 +716,5 @@ body.pd-open{overflow:hidden}
 /* 헤더 겹침 방지 */
 .hdr .wrap{gap:12px}.nav{flex-shrink:0}
 @media(min-width:1101px) and (max-width:1380px){.nav a{font-size:13.5px;padding:8px 6px}.nav a.cta{padding:8px 12px;margin-left:2px}.brand b{font-size:16px}.brand img{width:38px;height:38px}}
+.hdr .wrap{max-width:1440px}
+@media(min-width:1381px) and (max-width:1560px){.nav a{font-size:14px;padding:8px 8px}}
