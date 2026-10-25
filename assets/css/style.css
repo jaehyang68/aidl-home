@@ -668,3 +668,21 @@ body.pd-open{overflow:hidden}
   .nav-admin{padding:5px 9px!important}
   .brand span small{letter-spacing:0;font-size:10px}
 }
+
+/* 영상 재생 버튼: 첫 화면을 가리지 않도록 작은 원형 아이콘 + 모서리 라벨 */
+.vbox .play{display:block;background:linear-gradient(0deg,rgba(15,23,42,.45),rgba(15,23,42,0) 32%)}
+.vbox .play::before{content:"";position:absolute;left:50%;top:50%;width:50px;height:50px;transform:translate(-50%,-50%);border-radius:50%;background:rgba(15,23,42,.5);border:2px solid #fff;transition:transform .2s,background .2s}
+.vbox .play::after{content:"";position:absolute;left:50%;top:50%;transform:translate(-30%,-50%);border-style:solid;border-width:9px 0 9px 15px;border-color:transparent transparent transparent #fff}
+.vbox .play:hover::before{background:var(--cobalt);transform:translate(-50%,-50%) scale(1.08)}
+.vbox .play span{position:absolute;right:10px;top:10px;bottom:auto;left:auto;padding:4px 10px;gap:6px;font-size:11.5px;box-shadow:none;border-width:1.5px;background:rgba(15,23,42,.78)}
+.vbox .play span .i{width:14px;height:14px}
+.vbox .play span svg{display:none}
+
+/* 클릭 가능한 대표 교육 배너 (카드별 링크 영역) */
+.sc-multi{position:relative;display:block;line-height:0}
+.sc-multi .hit{position:absolute;top:25%;height:73%;border-radius:2.4%;outline-offset:-3px;transition:background .2s,box-shadow .2s}
+.sc-multi .hit:hover,.sc-multi .hit:focus-visible{background:rgba(139,124,246,.10);box-shadow:inset 0 0 0 3px #8B7CF6;outline:none}
+.sc-multi:hover{transform:none;box-shadow:0 10px 30px rgba(139,124,246,.28),0 2px 6px rgba(15,23,42,.08)}
+.pbody ul,.ad-body ul{list-style:disc;padding-left:1.5em;margin:.6em 0}
+.pbody ol,.ad-body ol{list-style:decimal;padding-left:1.5em;margin:.6em 0}
+.pbody li{margin:.3em 0}

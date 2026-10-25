@@ -9,7 +9,7 @@
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return [].slice.call((r || document).querySelectorAll(s)); };
   var root = null, tab = 'prog', q = '', CL = A.cloud, cloudSubs = null;
-  function loadCloudSubs() { if (!CL) return; CL.listSubs().then(function (l) { cloudSubs = l; if (root && !root.hidden) draw(); }).catch(function (e) { if (e && e.status === 401) { CL.logout(); toast('로그인이 만료되었어요. 다시 로그인해 주세요.', true); closeAdmin(); } }); }
+  function loadCloudSubs() { return; if (!CL) return; CL.listSubs().then(function (l) { cloudSubs = l; if (root && !root.hidden) draw(); }).catch(function (e) { if (e && e.status === 401) { CL.logout(); toast('로그인이 만료되었어요. 다시 로그인해 주세요.', true); closeAdmin(); } }); }
   function saveFail(r) { toast(r && r.login ? '로그인이 만료되었어요. 홈에서 다시 로그인해 주세요.' : '저장에 실패했어요. 인터넷 연결과 이미지 크기를 확인해 주세요.', true); }
 
   function kb(n) { return n > 1048576 ? (n / 1048576).toFixed(1) + 'MB' : Math.round(n / 1024) + 'KB'; }
@@ -20,20 +20,22 @@
   }
 
   /* ---------- 이미지 자동 압축 엔진 (Canvas) ---------- */
-  var MAX_SIDE = 800, MAX_BYTES = 5 * 1024 * 1024, TARGET = 120 * 1024;
-  function compress(file) {
+  var MAX_SIDE = 800, MAX_BYTES = 10 * 1024 * 1024, TARGET = 120 * 1024;
+  /* mode 'body' : 상세 본문 이미지(가로 1200px까지, 세로로 긴 이미지도 선명하게)  /  기본 : 대표 이미지(긴 변 800px) */
+  function compress(file, mode) {
     return new Promise(function (resolve, reject) {
       if (!/^image\/(jpeg|png|webp)$/i.test(file.type)) return reject(new Error('JPG, PNG, WEBP 이미지만 올릴 수 있어요.'));
-      if (file.size > MAX_BYTES) return reject(new Error('이미지는 5MB 이하만 올릴 수 있어요.'));
+      if (file.size > MAX_BYTES) return reject(new Error('이미지는 10MB 이하만 올릴 수 있어요.'));
       var url = URL.createObjectURL(file), img = new Image();
       img.onload = function () {
-        var w = img.naturalWidth, h = img.naturalHeight, k = Math.min(1, MAX_SIDE / Math.max(w, h));
+        var w = img.naturalWidth, h = img.naturalHeight, body = mode === 'body';
+        var k = body ? Math.min(1, 1200 / w, 4000 / h) : Math.min(1, MAX_SIDE / Math.max(w, h)), target = body ? 380 * 1024 : TARGET, floor = body ? 0.62 : 0.5;
         var cw = Math.max(1, Math.round(w * k)), ch = Math.max(1, Math.round(h * k));
         var c = document.createElement('canvas'); c.width = cw; c.height = ch;
         var x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, cw, ch); x.imageSmoothingQuality = 'high'; x.drawImage(img, 0, 0, cw, ch);
         URL.revokeObjectURL(url);
         var qlt = 0.72, out = c.toDataURL('image/jpeg', qlt);
-        while (out.length * 0.75 > TARGET && qlt > 0.5) { qlt -= 0.1; out = c.toDataURL('image/jpeg', qlt); }
+        while (out.length * 0.75 > target && qlt > floor) { qlt -= 0.1; out = c.toDataURL('image/jpeg', qlt); }
         resolve({ dataUrl: out, before: file.size, after: Math.round(out.length * 0.75), w: cw, h: ch });
       };
       img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('이미지를 읽지 못했어요. 다른 파일로 시도해 주세요.')); };
@@ -57,7 +59,7 @@
     root.innerHTML =
       '<div class="ad-bar"><b>🛠 관리자 모드</b>' + (CL ? '<span class="ad-note">☁ 클라우드에 연결됨 · 저장하면 <u>모든 방문자</u>에게 바로 보입니다. (' + esc(CL.email()) + ')</span><button class="btn sm" type="button" id="adOut">로그아웃</button>' : '<span class="ad-note">여기서 바꾼 내용은 <u>이 브라우저</u>에 저장됩니다. 모든 방문자에게 보이려면 [백업·가져오기]에서 내려받은 파일을 올려 주세요.</span>') + '<button class="btn sm yellow" type="button" id="adHome">홈 화면으로 돌아가기</button></div>' +
       '<div class="ad-in"><div class="ad-tabs" role="tablist">' +
-      tabBtn('prog', '프로그램 관리 (' + A.getPrograms().length + ')') + tabBtn('subs', '뉴스레터 구독자 (' + subs.length + ')') + tabBtn('bak', '백업·가져오기') + '</div>' +
+      tabBtn('prog', '프로그램 관리 (' + A.getPrograms().length + ')') + tabBtn('bak', '백업·가져오기') + '</div>' +
       '<div id="adBody"></div></div>';
     $('#adHome', root).onclick = closeAdmin;
     var ao = $('#adOut', root); if (ao) ao.onclick = function () { CL.logout(); cloudSubs = null; closeAdmin(); toast('로그아웃했어요.'); };
@@ -101,7 +103,7 @@
       '<div class="ad-g3"><label>대상<input id="fTarget" value="' + esc(p.target) + '" placeholder="공공기관 실무자"></label><label>시간<input id="fDur" value="' + esc(p.duration) + '" placeholder="예) 3시간 / 하루 7시간"></label><label>산출물·안내<input id="fOut" value="' + esc(p.output) + '" placeholder="교육 후 남는 결과물"></label></div>' +
       '<div class="ad-box"><div class="ad-lbl">대표 이미지 (카드·상세 상단 1:1 정사각)</div>' +
       '<div class="ad-itabs"><button type="button" data-it="file" aria-selected="true">파일 업로드</button><button type="button" data-it="url" aria-selected="false">웹 링크 입력</button></div>' +
-      '<div id="itFile"><div class="ad-drop" id="fDrop" tabindex="0" role="button" aria-label="이미지 파일 선택"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4 4 0 0 1-.5-7.97A6 6 0 0 1 18 9.5 4.5 4.5 0 0 1 17.5 18H7z"/><path d="M12 12v6M9.5 14.5 12 12l2.5 2.5"/></svg><b>여기로 끌어다 놓거나 클릭해서 선택</b><small>JPG·PNG·WEBP, 5MB 이하 · 자동으로 800px·JPEG로 압축됩니다</small></div><input type="file" id="fFile" accept="image/jpeg,image/png,image/webp" hidden></div>' +
+      '<div id="itFile"><div class="ad-drop" id="fDrop" tabindex="0" role="button" aria-label="이미지 파일 선택"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4 4 0 0 1-.5-7.97A6 6 0 0 1 18 9.5 4.5 4.5 0 0 1 17.5 18H7z"/><path d="M12 12v6M9.5 14.5 12 12l2.5 2.5"/></svg><b>여기로 끌어다 놓거나 클릭해서 선택</b><small>JPG·PNG·WEBP, 10MB 이하 · 자동으로 압축됩니다</small></div><input type="file" id="fFile" accept="image/jpeg,image/png,image/webp" hidden></div>' +
       '<div id="itUrl" hidden><div class="ad-url"><input id="fUrl" placeholder="https://… 로 시작하는 이미지 주소"><button class="btn sm" type="button" id="fUrlBtn">불러오기</button></div></div>' +
       '<div class="ad-prev" id="fPrev"></div>' +
       '<div class="ad-fit">표시 방식: <label><input type="radio" name="fit" value="contain"' + (p.imageFit !== 'cover' ? ' checked' : '') + '> 전체 보이기(글자·포스터 추천)</label> <label><input type="radio" name="fit" value="cover"' + (p.imageFit === 'cover' ? ' checked' : '') + '> 꽉 채우기(사진 추천)</label></div></div>' +
@@ -154,7 +156,7 @@
     function insertImages(files) {
       var arr = [].slice.call(files); (function next() {
         var f = arr.shift(); if (!f) return;
-        compress(f).then(function (r) { restore(); document.execCommand('insertHTML', false, '<p style="text-align:center"><img src="' + r.dataUrl + '" alt=""></p><p><br></p>'); saveSel(); }).catch(function (e) { toast(e.message, true); }).then(next);
+        compress(f, 'body').then(function (r) { restore(); document.execCommand('insertHTML', false, '<p style="text-align:center"><img src="' + r.dataUrl + '" alt=""></p><p><br></p>'); saveSel(); }).catch(function (e) { toast(e.message, true); }).then(next);
       })();
     }
     $('#tFile', m).onchange = function (e) { insertImages(e.target.files); e.target.value = ''; };
