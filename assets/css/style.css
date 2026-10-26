@@ -767,3 +767,17 @@ body.pay-open .mbar,body.pay-open .fab,body.pay-open .pet,body.pay-open .bubble{
 .pay-next{margin:4px 0 18px;padding:14px;border:2px dashed var(--bd);border-radius:12px;background:#F8FAFC;display:flex;flex-direction:column;gap:10px;align-items:center}
 .pay-next p{font-weight:700}.pay-next .btn{min-width:0}
 .pay-detail.legal p{white-space:normal;margin:0 0 8px;color:var(--ink)}
+
+.nav a[hidden],.hero a[hidden]{display:none!important}
+.nav a.nav-buy{background:var(--highlight);border:2px solid var(--navy);border-radius:999px;padding:5px 11px}
+@media(max-width:1100px){.nav a.nav-buy{padding:15px 14px;border-radius:12px}}
+
+.prod .pim{aspect-ratio:707/1000}
+
+/* 런칭 특가 배지·할인가 */
+.prod .pim{position:relative}
+.pbadge{position:absolute;left:10px;top:10px;z-index:2;background:#EF4444;color:#fff;font-weight:800;font-size:12.5px;padding:6px 11px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.pwrap{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px}
+.plist{color:#94A3B8;font-size:14px}
+.poff{font-style:normal;color:#EF4444;font-weight:800;font-size:13px}
+.psale{margin:6px 0 0;font-size:12.5px;color:#EF4444;line-height:1.5}
