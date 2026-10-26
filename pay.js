@@ -14,22 +14,34 @@
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function won(n) { return Number(n).toLocaleString('ko-KR') + '원'; }
   function img(u) { u = String(u || ''); return (/^https:\/\/[^\s"'<>]+$/i.test(u) || /^assets\/[\w\-./]+$/i.test(u)) ? u : ''; }
-  var list = [], sdkP = null, cur = null, widgets = null;
+  var list = [], sales = {}, sdkP = null, cur = null, widgets = null;
 
   /* ---------- 상품 목록 ---------- */
   function renderShop() {
     var sec = $('#shop'), grid = $('#shopGrid'); if (!sec || !grid) return;
     sec.hidden = !list.length;
+    ['navBuy', 'heroBuy'].forEach(function (id) { var n = document.getElementById(id); if (n) n.hidden = !list.length; });
     grid.innerHTML = list.map(function (p) {
-      var im = img(p.image);
-      return '<article class="card prod rv in"><div class="pim">' + (im ? '<img src="' + esc(im) + '" alt="' + esc(p.title) + '" loading="lazy">' : '<span class="pph">E-BOOK</span>') + '</div>' +
+      var im = img(p.image), td = new Date(), today = td.getFullYear() + '-' + ('0' + (td.getMonth() + 1)).slice(-2) + '-' + ('0' + td.getDate()).slice(-2);
+      if (p.salePrice == null) p.salePrice = p.price;                            // 특가 가격 원본 보관
+      var sold = sales[p.id] || 0, left = p.sale_limit ? Math.max(0, p.sale_limit - sold) : null;
+      var live = (!p.sale_until || String(p.sale_until) >= today) && (left === null || left > 0);   // 기간이 끝나거나 선착순이 차면 특가 종료
+      p.price = (!live && p.list_price && p.list_price > p.salePrice) ? p.list_price : p.salePrice;  // 종료 후에는 정가를 받습니다
+      var off = live && p.list_price && p.list_price > p.price ? Math.round((1 - p.price / p.list_price) * 100) : 0;
+      var bd = live && p.badge ? '<span class="pbadge">' + esc(p.badge) + '</span>' : '';
+      var until = live && (p.sale_until || left !== null) && (p.badge || off) ? '<p class="psale">' + (p.sale_until ? '특가는 ' + esc(String(p.sale_until).slice(5, 7).replace(/^0/, '')) + '월 ' + esc(String(p.sale_until).slice(8, 10).replace(/^0/, '')) + '일까지' : '선착순 특가') + ' · ' + (left !== null ? '남은 특가 ' + left + '명' : '마감 전 조기 종료될 수 있어요') + '</p>' : '';
+      var pr = (off ? '<s class="plist">' + won(p.list_price) + '</s> ' : '') + '<b class="pprice">' + won(p.price) + '</b>' + (off ? ' <em class="poff">' + off + '% 할인</em>' : '');
+      return '<article class="card prod rv in"><div class="pim">' + bd + (im ? '<img src="' + esc(im) + '" alt="' + esc(p.title) + '" loading="lazy">' : '<span class="pph">E-BOOK</span>') + '</div>' +
         '<div class="ptx"><h3>' + esc(p.title) + '</h3>' + (p.description ? '<p>' + esc(p.description) + '</p>' : '') +
-        (p.detail ? '<button class="btn sm ghost" type="button" data-more="' + esc(p.id) + '">자세히 보기</button>' : '') + '<div class="prow"><b class="pprice">' + won(p.price) + '</b><button class="btn primary" type="button" data-buy="' + esc(p.id) + '">구매하기</button></div></div></article>';
+        (p.detail ? '<button class="btn sm ghost" type="button" data-more="' + esc(p.id) + '">자세히 보기</button>' : '') + '' + until + '<div class="prow"><span class="pwrap">' + pr + '</span><button class="btn primary" type="button" data-buy="' + esc(p.id) + '">구매하기</button></div></div></article>';
     }).join('');
   }
   function loadShop() {
     if (!C || !C.enabled) return;
-    C.products().then(function (r) { list = r || []; renderShop(); }).catch(function () {});
+    C.products().then(function (r) {
+      list = r || []; renderShop();
+      if (C.sold) C.sold().then(function (rows) { (rows || []).forEach(function (x) { sales[x.product_id] = Number(x.sold) || 0; }); renderShop(); }).catch(function () {});
+    }).catch(function () {});
   }
   function rich(t) {   // ## 제목 / - 목록 / > 인용 / 나머지는 문단 (모두 이스케이프 후 변환)
     var out = [], ul = false;
@@ -118,13 +130,30 @@
 
   /* ---------- 결제 후 돌아왔을 때 ---------- */
   function done(o) {
+    var dls = (o.downloads && o.downloads.length) ? o.downloads : (o.downloadUrl ? [{ url: o.downloadUrl, title: '', name: o.orderName }] : []);
     var box = open('<div class="pay-ok"><div class="pay-chk" aria-hidden="true">✓</div><h3>결제가 완료되었습니다! 감사합니다.</h3>' +
       '<p class="pay-sum"><b>' + esc(o.orderName) + '</b><br>' + won(o.amount) + '</p>' +
-      (o.downloadUrl ? '<a class="btn yellow big pay-dl" href="' + esc(o.downloadUrl) + '" rel="noopener">📥 전자책 다운로드</a>' + (o.mailed ? '<p class="pay-note">입력하신 이메일(' + esc(o.email || '') + ')로도 다운로드 링크를 보냈어요. (7일간 유효, 안 보이면 스팸함을 확인해 주세요)</p>' : '<p class="pay-note">다운로드 링크는 이 화면에서만 보여요. 창을 닫기 전에 꼭 저장해 주세요.</p>') : '') +
+      (dls.length ? '<div class="pay-dls">' + dls.map(function (d, i) { return '<a class="btn yellow big pay-dl" data-i="' + i + '" href="' + esc(d.url) + '" rel="noopener">📥 ' + esc(dls.length > 1 ? (d.title || d.name || '전자책') : '전자책') + ' 다운로드</a>'; }).join('') + '</div>' + (o.mailed ? '<p class="pay-note">입력하신 이메일(' + esc(o.email || '') + ')로도 다운로드 링크를 보냈어요. (7일간 유효, 안 보이면 스팸함을 확인해 주세요)</p>' : '<p class="pay-note">다운로드 링크는 이 화면에서만 보여요. 창을 닫기 전에 꼭 저장해 주세요.</p>') : '') +
       '<p class="pay-note">테스트 결제라 실제 금액은 청구되지 않았어요.</p>' +
       '<div class="pay-next"><p>🎤 우리 기관·모임에서 직접 들으시려면?</p><a class="btn primary" href="#contact" data-x>강의 문의하기</a>' + (list.length > 1 ? ' <a class="btn ghost" href="#shop" data-x>다른 AI 자료 보기</a>' : '') + '</div>' +
       '<button class="btn primary big" type="button" data-x>확인</button></div>', 'ok');
     box.dataset.lock = '1';
+    // 한글 파일명으로 저장: 파일을 받아 이름을 붙여 저장합니다. 실패하면 기본 다운로드로 넘어갑니다.
+    Array.prototype.forEach.call(box.querySelectorAll('.pay-dl'), function (dl) {
+      var d = dls[+dl.getAttribute('data-i')];
+      dl.addEventListener('click', function (e) {
+        if (!window.fetch || !window.URL || !URL.createObjectURL) return;
+        e.preventDefault();
+        var nm = String((dls.length > 1 ? (d.title || d.name) : o.orderName) || '전자책').replace(/\s*[\(\[（].*?[\)\]）]\s*/g, ' ').replace(/[\\\/:*?"<>|]/g, '').replace(/\s+/g, ' ').trim() || '전자책';
+        var old = dl.textContent; dl.textContent = '다운로드 준비 중…';
+        fetch(d.url).then(function (r) { if (!r.ok) throw 0; return r.blob(); }).then(function (b) {
+          var u = URL.createObjectURL(b), a = document.createElement('a');
+          a.href = u; a.download = nm + '.pdf'; document.body.appendChild(a); a.click();
+          setTimeout(function () { URL.revokeObjectURL(u); a.remove(); }, 2000);
+          dl.textContent = old;
+        }).catch(function () { dl.textContent = old; window.location.href = d.url; });
+      });
+    });
   }
   function fail(msg) {
     open('<div class="pay-ok"><div class="pay-chk bad" aria-hidden="true">!</div><h3>결제가 완료되지 않았어요</h3><p class="pay-note">' + esc(msg || '다시 시도해 주세요.') + '</p><button class="btn primary big" type="button" data-x>확인</button></div>');
