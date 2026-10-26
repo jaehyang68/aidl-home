@@ -79,6 +79,7 @@
       try { if (C.loggedIn()) return Promise.resolve(); } catch (e) {}
       return call('POST', '/rest/v1/inquiry_events', { json: { program_id: String(rec.id || 'general').slice(0, 60), program_title: String(rec.title || '').slice(0, 120), kind: rec.kind, place: String(rec.place || '').slice(0, 20) }, prefer: 'return=minimal' }).catch(function () {});
     },
+    resetTest: function () { return call('POST', '/rest/v1/rpc/reset_test_data', { auth: true, json: {} }); },
     stats: function () { return call('POST', '/rest/v1/rpc/inquiry_stats', { auth: true, json: {} }); },
 
 

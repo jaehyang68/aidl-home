@@ -232,8 +232,9 @@
         '<label style="display:flex;gap:8px;align-items:center"><input id="shA" type="checkbox" style="width:auto"' + (f.active ? ' checked' : '') + '> 판매중 (끄면 화면에서 숨김)</label>' +
         '<div style="display:flex;gap:8px"><button class="btn primary" type="button" id="shSave">저장</button><button class="btn" type="button" id="shCancel">취소</button></div></div>' : '') +
       '<div class="ad-tw"><table class="ad-t"><thead><tr><th>썸네일</th><th>상품</th><th>가격</th><th>상태</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="5" class="ad-empty">등록된 상품이 없습니다.</td></tr>') + '</tbody></table></div>' +
-      '<h3 style="margin:26px 0 10px">최근 주문·결제 내역</h3><div class="ad-tw"><table class="ad-t"><thead><tr><th>시각</th><th>상품</th><th>금액</th><th>상태</th></tr></thead><tbody>' + (ord || '<tr><td colspan="4" class="ad-empty">아직 주문이 없습니다.</td></tr>') + '</tbody></table></div>' +
+      '<h3 style="margin:26px 0 10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">최근 주문·결제 내역 <button class="btn sm" type="button" id="rsTest">🧹 테스트 기록 초기화</button></h3><div class="ad-tw"><table class="ad-t"><thead><tr><th>시각</th><th>상품</th><th>금액</th><th>상태</th></tr></thead><tbody>' + (ord || '<tr><td colspan="4" class="ad-empty">아직 주문이 없습니다.</td></tr>') + '</tbody></table></div>' +
       '<p class="st-note">지금은 토스 공식 공개 테스트 키로 연결되어 있어 실제 돈이 나가지 않아요. 실제 결제로 바꾸려면 토스페이먼츠 가입·심사 후 라이브 키로 교체해야 합니다.</p>';
+    var rt = $('#rsTest', root); if (rt) rt.onclick = function () { resetTest(drawShop); };
     $('#shNew', root).onclick = function () { shopEdit = { _new: true, id: 'p' + Date.now().toString(36), title: '', price: 100, description: '', image: '', active: true }; drawShop(); };
     $$('[data-e]', root).forEach(function (b) { b.onclick = function () { var p = shopRows.filter(function (x) { return x.id === b.dataset.e; })[0]; shopEdit = p ? { id: p.id, title: p.title, price: p.price, description: p.description, image: p.image, active: p.active, sort_order: p.sort_order, file_path: p.file_path || '', detail: p.detail || '', list_price: p.list_price || '', badge: p.badge || '', sale_until: p.sale_until || '', sale_limit: p.sale_limit || '', bundle_of: p.bundle_of || [] } : null; drawShop(); }; });
     $$('[data-d]', root).forEach(function (b) { b.onclick = function () { if (!confirm('이 상품을 삭제할까요? (주문 기록은 남습니다)')) return; CL.delProduct(b.dataset.d).then(function () { toast('삭제했어요.'); shopRows = null; drawShop(); }).catch(function () { toast('삭제하지 못했어요.', true); }); }; });
@@ -255,6 +256,12 @@
   }
 
   /* ---------- 문의 통계 (프로그램별 조회·문의 버튼 클릭·카톡·접수) ---------- */
+  function resetTest(done) {
+    if (!confirm('테스트로 쌓인 주문·결제 내역과 문의 통계를 모두 지웁니다.\n(상품·가격·구독자는 그대로 남아요. 지운 기록은 되돌릴 수 없어요.)\n\n계속할까요?')) return;
+    var w = prompt('확인을 위해 "초기화"를 입력해 주세요.'); if (w !== '초기화') { toast('취소했어요.'); return; }
+    CL.resetTest().then(function (r) { toast('지웠어요. 주문 ' + ((r && r.orders) || 0) + '건 · 문의 기록 ' + ((r && r.events) || 0) + '건'); shopRows = null; shopOrders = null; statRows = null; done(); })
+      .catch(function (e) { toast((e && e.status === 404) ? '초기화 기능이 아직 설정되지 않았어요. (Supabase SQL 실행 필요)' : '지우지 못했어요. 다시 로그인해 보세요.', true); });
+  }
   var statRows = null, statPeriod = 'd30', statErr = '';
   function loadStats() {
     statErr = ''; CL.stats().then(function (r) { statRows = r || []; if (tab === 'stats') drawStats(); })
@@ -281,7 +288,8 @@
       '<button class="btn" type="button" id="stR">새로고침</button></div></div>' +
       '<div class="st-cards"><div><span>상세페이지 조회</span><b>' + T.view + '</b></div><div><span>문의 버튼 클릭</span><b>' + T.inquiry + '</b></div><div><span>카톡 상담 클릭</span><b>' + T.kakao + '</b></div><div class="hl"><span>문의서 접수</span><b>' + T.submit + '</b></div></div>' +
       '<div class="ad-tw"><table class="ad-t"><thead><tr><th>프로그램</th><th>조회</th><th>문의 클릭</th><th>카톡 클릭</th><th>접수</th><th>행동률*</th></tr></thead><tbody>' + (rows || '<tr><td colspan="6" class="ad-empty">아직 집계된 데이터가 없습니다.</td></tr>') + '</tbody></table></div>' +
-      '<p class="st-note">* 행동률 = (문의 클릭 + 카톡 클릭) ÷ 조회. 접수는 문의 폼이 정상 전송된 횟수이며, 실제 내용은 80284@naver.com 메일로 받으세요. 관리자로 로그인한 상태의 클릭은 집계하지 않습니다.</p>';
+      '<p class="st-note">* 행동률 = (문의 클릭 + 카톡 클릭) ÷ 조회. 접수는 문의 폼이 정상 전송된 횟수이며, 실제 내용은 80284@naver.com 메일로 받으세요. 관리자로 로그인한 상태의 클릭은 집계하지 않습니다.</p><p><button class="btn sm" type="button" id="rsTest2">🧹 테스트 기록 초기화 (주문·문의 통계)</button></p>';
+    var rt2 = $('#rsTest2', root); if (rt2) rt2.onclick = function () { resetTest(drawStats); };
     $('#stP', root).onchange = function (e) { statPeriod = e.target.value; drawStats(); };
     $('#stR', root).onclick = function () { statRows = null; drawStats(); };
   }
