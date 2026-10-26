@@ -781,3 +781,10 @@ body.pay-open .mbar,body.pay-open .fab,body.pay-open .pet,body.pay-open .bubble{
 .plist{color:#94A3B8;font-size:14px}
 .poff{font-style:normal;color:#EF4444;font-weight:800;font-size:13px}
 .psale{margin:6px 0 0;font-size:12.5px;color:#EF4444;line-height:1.5}
+
+/* 구매하기 둥둥 버튼 · 번들 추천 */
+.buy-fab{position:fixed;right:16px;bottom:18px;z-index:60;background:var(--highlight);color:var(--navy);border:2px solid var(--navy);border-radius:999px;padding:12px 18px;font-weight:800;font-size:15px;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,.28);transition:opacity .2s,transform .2s}
+.buy-fab.off,.buy-fab[hidden]{opacity:0;pointer-events:none;transform:translateY(10px)}
+.buy-fab[hidden]{display:none}
+.prod.prod-best{position:relative;border:3px solid #F59E0B;box-shadow:0 8px 26px rgba(245,158,11,.28)}
+.pbest{position:absolute;right:-1px;top:-14px;z-index:3;background:#F59E0B;color:#111;font-weight:800;font-size:13px;padding:6px 14px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
