@@ -130,29 +130,30 @@
 
   /* ---------- 결제 후 돌아왔을 때 ---------- */
   function done(o) {
+    var dls = (o.downloads && o.downloads.length) ? o.downloads : (o.downloadUrl ? [{ url: o.downloadUrl, title: '', name: o.orderName }] : []);
     var box = open('<div class="pay-ok"><div class="pay-chk" aria-hidden="true">✓</div><h3>결제가 완료되었습니다! 감사합니다.</h3>' +
       '<p class="pay-sum"><b>' + esc(o.orderName) + '</b><br>' + won(o.amount) + '</p>' +
-      (o.downloadUrl ? '<a class="btn yellow big pay-dl" href="' + esc(o.downloadUrl) + '" rel="noopener">📥 전자책 다운로드</a>' + (o.mailed ? '<p class="pay-note">입력하신 이메일(' + esc(o.email || '') + ')로도 다운로드 링크를 보냈어요. (7일간 유효, 안 보이면 스팸함을 확인해 주세요)</p>' : '<p class="pay-note">다운로드 링크는 이 화면에서만 보여요. 창을 닫기 전에 꼭 저장해 주세요.</p>') : '') +
+      (dls.length ? '<div class="pay-dls">' + dls.map(function (d, i) { return '<a class="btn yellow big pay-dl" data-i="' + i + '" href="' + esc(d.url) + '" rel="noopener">📥 ' + esc(dls.length > 1 ? (d.title || d.name || '전자책') : '전자책') + ' 다운로드</a>'; }).join('') + '</div>' + (o.mailed ? '<p class="pay-note">입력하신 이메일(' + esc(o.email || '') + ')로도 다운로드 링크를 보냈어요. (7일간 유효, 안 보이면 스팸함을 확인해 주세요)</p>' : '<p class="pay-note">다운로드 링크는 이 화면에서만 보여요. 창을 닫기 전에 꼭 저장해 주세요.</p>') : '') +
       '<p class="pay-note">테스트 결제라 실제 금액은 청구되지 않았어요.</p>' +
       '<div class="pay-next"><p>🎤 우리 기관·모임에서 직접 들으시려면?</p><a class="btn primary" href="#contact" data-x>강의 문의하기</a>' + (list.length > 1 ? ' <a class="btn ghost" href="#shop" data-x>다른 AI 자료 보기</a>' : '') + '</div>' +
       '<button class="btn primary big" type="button" data-x>확인</button></div>', 'ok');
     box.dataset.lock = '1';
     // 한글 파일명으로 저장: 파일을 받아 이름을 붙여 저장합니다. 실패하면 기본 다운로드로 넘어갑니다.
-    var dl = box.querySelector('.pay-dl');
-    if (dl && o.downloadUrl) {
+    Array.prototype.forEach.call(box.querySelectorAll('.pay-dl'), function (dl) {
+      var d = dls[+dl.getAttribute('data-i')];
       dl.addEventListener('click', function (e) {
         if (!window.fetch || !window.URL || !URL.createObjectURL) return;
         e.preventDefault();
-        var nm = String(o.orderName || '전자책').replace(/\s*[\(\[（].*?[\)\]）]\s*/g, ' ').replace(/[\\\/:*?"<>|]/g, '').replace(/\s+/g, ' ').trim() || '전자책';
+        var nm = String((dls.length > 1 ? (d.title || d.name) : o.orderName) || '전자책').replace(/\s*[\(\[（].*?[\)\]）]\s*/g, ' ').replace(/[\\\/:*?"<>|]/g, '').replace(/\s+/g, ' ').trim() || '전자책';
         var old = dl.textContent; dl.textContent = '다운로드 준비 중…';
-        fetch(o.downloadUrl).then(function (r) { if (!r.ok) throw 0; return r.blob(); }).then(function (b) {
+        fetch(d.url).then(function (r) { if (!r.ok) throw 0; return r.blob(); }).then(function (b) {
           var u = URL.createObjectURL(b), a = document.createElement('a');
           a.href = u; a.download = nm + '.pdf'; document.body.appendChild(a); a.click();
           setTimeout(function () { URL.revokeObjectURL(u); a.remove(); }, 2000);
           dl.textContent = old;
-        }).catch(function () { dl.textContent = old; window.location.href = o.downloadUrl; });
+        }).catch(function () { dl.textContent = old; window.location.href = d.url; });
       });
-    }
+    });
   }
   function fail(msg) {
     open('<div class="pay-ok"><div class="pay-chk bad" aria-hidden="true">!</div><h3>결제가 완료되지 않았어요</h3><p class="pay-note">' + esc(msg || '다시 시도해 주세요.') + '</p><button class="btn primary big" type="button" data-x>확인</button></div>');
