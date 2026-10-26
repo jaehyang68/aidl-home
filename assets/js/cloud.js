@@ -83,7 +83,7 @@
 
 
     /* 상품·결제: 상품 읽기는 누구나(판매중만) / 등록·수정·삭제·주문내역은 관리자 */
-    products: function () { return call('GET', '/rest/v1/products?select=id,title,price,description,detail,image,sort_order&active=eq.true&order=sort_order.asc,created_at.asc'); },
+    products: function () { return call('GET', '/rest/v1/products?select=id,title,price,description,detail,image,sort_order,list_price,badge,sale_until&active=eq.true&order=sort_order.asc,created_at.asc'); },
     allProducts: function () { return call('GET', '/rest/v1/products?select=*&order=sort_order.asc,created_at.asc', { auth: true }); },
     saveProduct: function (p) { p.updated_at = new Date().toISOString(); return call('POST', '/rest/v1/products?on_conflict=id', { auth: true, json: [p], prefer: 'resolution=merge-duplicates,return=minimal' }); },
     delProduct: function (id) { return call('DELETE', '/rest/v1/products?id=eq.' + encodeURIComponent(id), { auth: true, prefer: 'return=minimal' }); },
