@@ -103,6 +103,7 @@
     open('<button class="pay-x" type="button" data-x aria-label="닫기">×</button>' +
       '<div class="pay-hd"><span class="pay-tag">TEST MODE · 실제 결제 없음</span><h3>' + esc(p.title) + '</h3><div class="pay-amt">' + won(p.price) + '</div></div>' +
       '<label class="pay-em">다운로드 링크를 받을 이메일<input id="tpEm" type="email" inputmode="email" autocomplete="email" placeholder="example@naver.com" maxlength="120"></label><p class="pay-priv">입력하신 이메일은 다운로드 링크 발송과 주문 확인에만 사용합니다.</p><p class="pay-priv"><b>디지털 상품 안내:</b> 다운로드가 시작된 뒤에는 청약철회(환불)가 제한될 수 있어요. <button type="button" class="pay-lk" data-legal="refund">환불·청약철회 안내</button> · <button type="button" class="pay-lk" data-legal="terms">이용약관</button></p>' +
+      '<label class="pay-ack" style="display:flex;gap:8px;align-items:flex-start;font-size:14px;margin:6px 0"><input id="tpAck" type="checkbox" style="width:auto;margin-top:3px"> <span>디지털 상품은 다운로드 시작 후 청약철회가 제한될 수 있음을 확인했고, 이용약관·환불 안내에 동의합니다. (필수)</span></label>' +
       '<p class="pay-msg" id="tpMsg">결제창을 불러오는 중…</p><div id="tpPm"></div><div id="tpAg"></div>' +
       '<button class="btn primary big pay-go" type="button" id="tpGo" disabled>결제하기</button>');
     cur = p;
@@ -121,6 +122,7 @@
     var go = $('#tpGo'), p = cur; if (!p || !widgets) return;
     var em = ($('#tpEm').value || '').trim();
     if (!/^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']{2,}$/.test(em)) { $('#tpEm').focus(); $('#tpEm').classList.add('bad'); return; }
+    var ak = $('#tpAck'); if (ak && !ak.checked) { ak.focus(); var m0 = $('#tpMsg'); if (!m0) { m0 = document.createElement('p'); m0.id = 'tpMsg'; m0.className = 'pay-msg'; go.parentNode.insertBefore(m0, go); } m0.textContent = '디지털 상품 안내와 약관 동의에 체크해 주세요.'; return; }
     go.disabled = true; go.textContent = '주문 만드는 중…';
     C.pay({ action: 'order', productId: p.id, buyerEmail: em }).then(function (o) {
       if (Number(o.amount) !== Number(p.price)) { throw new Error('상품 가격이 바뀌었어요. 페이지를 새로고침한 뒤 다시 시도해 주세요.'); }
