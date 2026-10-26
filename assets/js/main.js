@@ -46,7 +46,7 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const max = document.documentElement.scrollHeight - innerHeight;
     const c = $('#contact').getBoundingClientRect();
     const inContact = c.top < innerHeight * .7 && c.bottom > 0;
-    fab.classList.toggle('on', scrollY > max * .3 && !inContact);
+    fab.classList.toggle('on', scrollY > 300 && !inContact);
   };
   addEventListener('scroll', onScroll, { passive: true });
   onScroll();
