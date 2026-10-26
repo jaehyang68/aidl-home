@@ -788,3 +788,9 @@ body.pay-open .mbar,body.pay-open .fab,body.pay-open .pet,body.pay-open .bubble{
 .buy-fab[hidden]{display:none}
 .prod.prod-best{position:relative;border:3px solid #F59E0B;box-shadow:0 8px 26px rgba(245,158,11,.28)}
 .pbest{position:absolute;right:-1px;top:-14px;z-index:3;background:#F59E0B;color:#111;font-weight:800;font-size:13px;padding:6px 14px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+/* 번들 카드: 추천 표시·배지가 표지 글자를 가리지 않게 */
+.prod.prod-best{overflow:visible}
+.prod.prod-best .pim{overflow:hidden}
+.prod.prod-best .pbest{top:-13px;right:14px}
+.prod.prod-best .pbadge{left:auto;right:10px;top:auto;bottom:10px}
+.prod.prod-best .pim{border-radius:14px 14px 0 0}
