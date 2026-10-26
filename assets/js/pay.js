@@ -14,7 +14,7 @@
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function won(n) { return Number(n).toLocaleString('ko-KR') + '원'; }
   function img(u) { u = String(u || ''); return (/^https:\/\/[^\s"'<>]+$/i.test(u) || /^assets\/[\w\-./]+$/i.test(u)) ? u : ''; }
-  var list = [], sdkP = null, cur = null, widgets = null;
+  var list = [], sales = {}, sdkP = null, cur = null, widgets = null;
 
   /* ---------- 상품 목록 ---------- */
   function renderShop() {
@@ -23,10 +23,13 @@
     ['navBuy', 'heroBuy'].forEach(function (id) { var n = document.getElementById(id); if (n) n.hidden = !list.length; });
     grid.innerHTML = list.map(function (p) {
       var im = img(p.image), td = new Date(), today = td.getFullYear() + '-' + ('0' + (td.getMonth() + 1)).slice(-2) + '-' + ('0' + td.getDate()).slice(-2);
-      var live = !p.sale_until || String(p.sale_until) >= today;                 // 특가 기간이 지나면 배지·할인 표시를 숨깁니다
+      if (p.salePrice == null) p.salePrice = p.price;                            // 특가 가격 원본 보관
+      var sold = sales[p.id] || 0, left = p.sale_limit ? Math.max(0, p.sale_limit - sold) : null;
+      var live = (!p.sale_until || String(p.sale_until) >= today) && (left === null || left > 0);   // 기간이 끝나거나 선착순이 차면 특가 종료
+      p.price = (!live && p.list_price && p.list_price > p.salePrice) ? p.list_price : p.salePrice;  // 종료 후에는 정가를 받습니다
       var off = live && p.list_price && p.list_price > p.price ? Math.round((1 - p.price / p.list_price) * 100) : 0;
       var bd = live && p.badge ? '<span class="pbadge">' + esc(p.badge) + '</span>' : '';
-      var until = live && p.sale_until && (p.badge || off) ? '<p class="psale">특가는 ' + esc(String(p.sale_until).slice(5, 7).replace(/^0/, '')) + '월 ' + esc(String(p.sale_until).slice(8, 10).replace(/^0/, '')) + '일까지 · 마감 전 조기 종료될 수 있어요</p>' : '';
+      var until = live && (p.sale_until || left !== null) && (p.badge || off) ? '<p class="psale">' + (p.sale_until ? '특가는 ' + esc(String(p.sale_until).slice(5, 7).replace(/^0/, '')) + '월 ' + esc(String(p.sale_until).slice(8, 10).replace(/^0/, '')) + '일까지' : '선착순 특가') + ' · ' + (left !== null ? '남은 특가 ' + left + '명' : '마감 전 조기 종료될 수 있어요') + '</p>' : '';
       var pr = (off ? '<s class="plist">' + won(p.list_price) + '</s> ' : '') + '<b class="pprice">' + won(p.price) + '</b>' + (off ? ' <em class="poff">' + off + '% 할인</em>' : '');
       return '<article class="card prod rv in"><div class="pim">' + bd + (im ? '<img src="' + esc(im) + '" alt="' + esc(p.title) + '" loading="lazy">' : '<span class="pph">E-BOOK</span>') + '</div>' +
         '<div class="ptx"><h3>' + esc(p.title) + '</h3>' + (p.description ? '<p>' + esc(p.description) + '</p>' : '') +
@@ -35,7 +38,10 @@
   }
   function loadShop() {
     if (!C || !C.enabled) return;
-    C.products().then(function (r) { list = r || []; renderShop(); }).catch(function () {});
+    C.products().then(function (r) {
+      list = r || []; renderShop();
+      if (C.sold) C.sold().then(function (rows) { (rows || []).forEach(function (x) { sales[x.product_id] = Number(x.sold) || 0; }); renderShop(); }).catch(function () {});
+    }).catch(function () {});
   }
   function rich(t) {   // ## 제목 / - 목록 / > 인용 / 나머지는 문단 (모두 이스케이프 후 변환)
     var out = [], ul = false;

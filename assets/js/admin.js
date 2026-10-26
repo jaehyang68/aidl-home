@@ -217,10 +217,11 @@
     box.innerHTML = '<div class="ad-head"><div><h2>상품·결제</h2><p>여기서 등록한 상품이 메인 화면 [바로 구매하는 AI 자료]에 나타나고, 구매하기를 누르면 이 이름·가격으로 토스 결제창이 열려요. 결제 금액은 서버가 이 가격으로 다시 확인합니다.' + (shopErr ? ' <span style="color:#b91c1c">' + shopErr + '</span>' : '') + '</p></div><div class="ad-hbtn"><button class="btn primary" type="button" id="shNew">+ 상품 등록</button></div></div>' +
       (f ? '<div class="ad-form" style="border:2px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:18px;background:#fff"><h3>' + (f._new ? '새 상품' : '상품 수정') + '</h3>' +
         '<label>상품명<input id="shT" maxlength="120" value="' + esc(f.title) + '"></label>' +
-        '<label>가격(원, 100원 이상)<input id="shP" type="number" min="100" step="100" value="' + esc(f.price) + '"></label>' +
+        '<label>판매가 = 특가(원, 100원 이상 · 특가가 끝나면 아래 정가를 받아요)<input id="shP" type="number" min="100" step="100" value="' + esc(f.price) + '"></label>' +
         '<label>설명<input id="shD" maxlength="200" value="' + esc(f.description) + '"></label>' +
         '<label>정가(원, 할인 전 가격 · 비우면 할인 표시 안 함)<input id="shL" type="number" min="0" step="100" value="' + esc(f.list_price || '') + '"></label>' +
         '<label>배지 문구 (예: 🔥 런칭 특가 · 선착순 100명 · 비워도 됨)<input id="shG" maxlength="40" value="' + esc(f.badge || '') + '"></label>' +
+        '<label>선착순 인원 (예: 100 · 가득 차면 특가가 자동 종료 · 비워도 됨)<input id="shN" type="number" min="0" step="1" value="' + esc(f.sale_limit || '') + '"></label>' +
         '<label>특가 종료일 (이 날이 지나면 배지·할인 표시가 자동으로 사라져요 · 비워도 됨)<input id="shU" type="date" value="' + esc(f.sale_until || '') + '"></label>' +
         '<label>상세 소개 (## 제목, - 목록, > 인용 형식 · 비워도 됨)<textarea id="shX" rows="10" maxlength="6000" style="font:inherit;padding:11px 13px;border:2px solid var(--bd);border-radius:10px;width:100%">' + esc(f.detail || '') + '</textarea></label>' +
         (f.image ? '<div style="display:flex;gap:12px;align-items:center"><img src="' + esc(f.image) + '" alt="" style="width:64px;height:90px;object-fit:cover;border-radius:8px;border:2px solid var(--bd)"><span class="st-note">현재 썸네일(표지)</span></div>' : '') +
@@ -233,7 +234,7 @@
       '<h3 style="margin:26px 0 10px">최근 주문·결제 내역</h3><div class="ad-tw"><table class="ad-t"><thead><tr><th>시각</th><th>상품</th><th>금액</th><th>상태</th></tr></thead><tbody>' + (ord || '<tr><td colspan="4" class="ad-empty">아직 주문이 없습니다.</td></tr>') + '</tbody></table></div>' +
       '<p class="st-note">지금은 토스 공식 공개 테스트 키로 연결되어 있어 실제 돈이 나가지 않아요. 실제 결제로 바꾸려면 토스페이먼츠 가입·심사 후 라이브 키로 교체해야 합니다.</p>';
     $('#shNew', root).onclick = function () { shopEdit = { _new: true, id: 'p' + Date.now().toString(36), title: '', price: 100, description: '', image: '', active: true }; drawShop(); };
-    $$('[data-e]', root).forEach(function (b) { b.onclick = function () { var p = shopRows.filter(function (x) { return x.id === b.dataset.e; })[0]; shopEdit = p ? { id: p.id, title: p.title, price: p.price, description: p.description, image: p.image, active: p.active, sort_order: p.sort_order, file_path: p.file_path || '', detail: p.detail || '', list_price: p.list_price || '', badge: p.badge || '', sale_until: p.sale_until || '' } : null; drawShop(); }; });
+    $$('[data-e]', root).forEach(function (b) { b.onclick = function () { var p = shopRows.filter(function (x) { return x.id === b.dataset.e; })[0]; shopEdit = p ? { id: p.id, title: p.title, price: p.price, description: p.description, image: p.image, active: p.active, sort_order: p.sort_order, file_path: p.file_path || '', detail: p.detail || '', list_price: p.list_price || '', badge: p.badge || '', sale_until: p.sale_until || '', sale_limit: p.sale_limit || '' } : null; drawShop(); }; });
     $$('[data-d]', root).forEach(function (b) { b.onclick = function () { if (!confirm('이 상품을 삭제할까요? (주문 기록은 남습니다)')) return; CL.delProduct(b.dataset.d).then(function () { toast('삭제했어요.'); shopRows = null; drawShop(); }).catch(function () { toast('삭제하지 못했어요.', true); }); }; });
     if (f) {
       $('#shCancel', root).onclick = function () { shopEdit = null; drawShop(); };
@@ -241,7 +242,7 @@
         var title = $('#shT', root).value.trim(), price = parseInt($('#shP', root).value, 10);
         if (!title) return toast('상품명을 입력해 주세요.', true);
         if (!(price >= 100)) return toast('가격은 100원 이상이어야 해요.', true);
-        var rec = { id: f.id, title: title, price: price, description: $('#shD', root).value.trim(), image: $('#shI', root).value.trim(), active: $('#shA', root).checked, sort_order: f.sort_order || 0, file_path: f.file_path || '', detail: $('#shX', root).value, list_price: parseInt($('#shL', root).value, 10) || null, badge: $('#shG', root).value.trim() || null, sale_until: $('#shU', root).value || null };
+        var rec = { id: f.id, title: title, price: price, description: $('#shD', root).value.trim(), image: $('#shI', root).value.trim(), active: $('#shA', root).checked, sort_order: f.sort_order || 0, file_path: f.file_path || '', detail: $('#shX', root).value, list_price: parseInt($('#shL', root).value, 10) || null, badge: $('#shG', root).value.trim() || null, sale_until: $('#shU', root).value || null, sale_limit: parseInt($('#shN', root).value, 10) || null };
         var ef = $('#shB', root).files[0]; if (ef && ef.size > 50 * 1024 * 1024) return toast('전자책 파일은 50MB 이하만 올릴 수 있어요.', true);
         function save() { CL.saveProduct(rec).then(function () { toast('저장했어요. 메인 화면에 바로 반영됩니다.'); shopEdit = null; shopRows = null; drawShop(); }).catch(function () { toast('저장에 실패했어요.', true); }); }
         var file = $('#shF', root).files[0];
