@@ -59,12 +59,12 @@
     root.innerHTML =
       '<div class="ad-bar"><b>🛠 관리자 모드</b>' + (CL ? '<span class="ad-note">☁ 클라우드에 연결됨 · 저장하면 <u>모든 방문자</u>에게 바로 보입니다. (' + esc(CL.email()) + ')</span><button class="btn sm" type="button" id="adOut">로그아웃</button>' : '<span class="ad-note">여기서 바꾼 내용은 <u>이 브라우저</u>에 저장됩니다. 모든 방문자에게 보이려면 [백업·가져오기]에서 내려받은 파일을 올려 주세요.</span>') + '<button class="btn sm yellow" type="button" id="adHome">홈 화면으로 돌아가기</button></div>' +
       '<div class="ad-in"><div class="ad-tabs" role="tablist">' +
-      tabBtn('prog', '프로그램 관리 (' + A.getPrograms().length + ')') + (CL ? tabBtn('stats', '📊 문의 통계') : '') + tabBtn('bak', '백업·가져오기') + '</div>' +
+      tabBtn('prog', '프로그램 관리 (' + A.getPrograms().length + ')') + (CL ? tabBtn('shop', '🛒 상품·결제') + tabBtn('stats', '📊 문의 통계') : '') + tabBtn('bak', '백업·가져오기') + '</div>' +
       '<div id="adBody"></div></div>';
     $('#adHome', root).onclick = closeAdmin;
     var ao = $('#adOut', root); if (ao) ao.onclick = function () { CL.logout(); cloudSubs = null; closeAdmin(); toast('로그아웃했어요.'); };
     $$('.ad-tabs button', root).forEach(function (b) { b.onclick = function () { tab = b.dataset.t; draw(); }; });
-    if (tab === 'prog') drawProg(); else if (tab === 'subs') drawSubs(); else if (tab === 'stats' && CL) drawStats(); else drawBak();
+    if (tab === 'prog') drawProg(); else if (tab === 'subs') drawSubs(); else if (tab === 'stats' && CL) drawStats(); else if (tab === 'shop' && CL) drawShop(); else drawBak();
   }
   function tabBtn(t, label) { return '<button type="button" role="tab" data-t="' + t + '" aria-selected="' + (tab === t) + '">' + label + '</button>'; }
 
@@ -192,6 +192,60 @@
     $('#fTitle', m).focus();
   }
 
+
+
+  /* ---------- 상품·결제 (토스페이먼츠 테스트) ---------- */
+  var shopRows = null, shopOrders = null, shopEdit = null, shopErr = '';
+  function wonA(n) { return Number(n).toLocaleString('ko-KR') + '원'; }
+  function loadShop() {
+    shopErr = '';
+    Promise.all([CL.allProducts(), CL.orders()]).then(function (r) { shopRows = r[0] || []; shopOrders = r[1] || []; if (tab === 'shop') drawShop(); })
+      .catch(function (e) { if (e && e.status === 401) { CL.logout(); toast('로그인이 만료됐어요. 다시 로그인해 주세요.', true); closeAdmin(); return; } shopRows = shopRows || []; shopOrders = shopOrders || []; shopErr = '불러오지 못했어요.'; if (tab === 'shop') drawShop(); });
+  }
+  function drawShop() {
+    var box = $('#adBody', root);
+    if (shopRows === null) { box.innerHTML = '<div class="ad-head"><div><h2>상품·결제</h2><p>불러오는 중…</p></div></div>'; loadShop(); return; }
+    var st = { ready: '결제 대기', paid: '결제 완료', failed: '실패' };
+    var rows = shopRows.map(function (p) {
+      return '<tr><td><b>' + esc(p.title) + '</b><br><small>' + esc(p.id) + '</small></td><td>' + wonA(p.price) + '</td><td>' + (p.active ? '판매중' : '숨김') + '</td><td><button class="btn sm" type="button" data-e="' + esc(p.id) + '">수정</button> <button class="btn sm" type="button" data-d="' + esc(p.id) + '">삭제</button></td></tr>';
+    }).join('');
+    var ord = (shopOrders || []).map(function (o) {
+      return '<tr><td>' + fmt(o.created_at) + '</td><td>' + esc(o.product_title) + '</td><td>' + wonA(o.amount) + '</td><td><b>' + (st[o.status] || o.status) + '</b></td></tr>';
+    }).join('');
+    var f = shopEdit;
+    box.innerHTML = '<div class="ad-head"><div><h2>상품·결제</h2><p>여기서 등록한 상품이 메인 화면 [바로 구매하는 AI 자료]에 나타나고, 구매하기를 누르면 이 이름·가격으로 토스 결제창이 열려요. 결제 금액은 서버가 이 가격으로 다시 확인합니다.' + (shopErr ? ' <span style="color:#b91c1c">' + shopErr + '</span>' : '') + '</p></div><div class="ad-hbtn"><button class="btn primary" type="button" id="shNew">+ 상품 등록</button></div></div>' +
+      (f ? '<div class="ad-form" style="border:2px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:18px;background:#fff"><h3>' + (f._new ? '새 상품' : '상품 수정') + '</h3>' +
+        '<label>상품명<input id="shT" maxlength="120" value="' + esc(f.title) + '"></label>' +
+        '<label>가격(원, 100원 이상)<input id="shP" type="number" min="100" step="100" value="' + esc(f.price) + '"></label>' +
+        '<label>설명<input id="shD" maxlength="200" value="' + esc(f.description) + '"></label>' +
+        '<label>상세 소개 (## 제목, - 목록, > 인용 형식 · 비워도 됨)<textarea id="shX" rows="10" maxlength="6000" style="font:inherit;padding:11px 13px;border:2px solid var(--bd);border-radius:10px;width:100%">' + esc(f.detail || '') + '</textarea></label>' +
+        '<label>이미지 주소(비워도 됨) <input id="shI" value="' + esc(f.image) + '" placeholder="https://… 또는 아래에서 파일 선택"></label>' +
+        '<label>이미지 파일 올리기<input id="shF" type="file" accept="image/jpeg,image/png,image/webp"></label>' +
+        '<label>전자책 파일(결제한 사람에게만 다운로드 링크 안내, 50MB 이하)<input id="shB" type="file" accept=".pdf,.zip,.epub,.docx,.pptx,.xlsx,.hwp,.hwpx"></label>' + (f.file_path ? '<p class="st-note">현재 등록된 파일: ' + esc(f.file_path.split('/').pop()) + ' (새로 고르면 교체)</p>' : '<p class="st-note">등록된 파일 없음 — 결제 후 안내할 파일이 없어요.</p>') +
+        '<label style="display:flex;gap:8px;align-items:center"><input id="shA" type="checkbox" style="width:auto"' + (f.active ? ' checked' : '') + '> 판매중 (끄면 화면에서 숨김)</label>' +
+        '<div style="display:flex;gap:8px"><button class="btn primary" type="button" id="shSave">저장</button><button class="btn" type="button" id="shCancel">취소</button></div></div>' : '') +
+      '<div class="ad-tw"><table class="ad-t"><thead><tr><th>상품</th><th>가격</th><th>상태</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="4" class="ad-empty">등록된 상품이 없습니다.</td></tr>') + '</tbody></table></div>' +
+      '<h3 style="margin:26px 0 10px">최근 주문·결제 내역</h3><div class="ad-tw"><table class="ad-t"><thead><tr><th>시각</th><th>상품</th><th>금액</th><th>상태</th></tr></thead><tbody>' + (ord || '<tr><td colspan="4" class="ad-empty">아직 주문이 없습니다.</td></tr>') + '</tbody></table></div>' +
+      '<p class="st-note">지금은 토스 공식 공개 테스트 키로 연결되어 있어 실제 돈이 나가지 않아요. 실제 결제로 바꾸려면 토스페이먼츠 가입·심사 후 라이브 키로 교체해야 합니다.</p>';
+    $('#shNew', root).onclick = function () { shopEdit = { _new: true, id: 'p' + Date.now().toString(36), title: '', price: 100, description: '', image: '', active: true }; drawShop(); };
+    $$('[data-e]', root).forEach(function (b) { b.onclick = function () { var p = shopRows.filter(function (x) { return x.id === b.dataset.e; })[0]; shopEdit = p ? { id: p.id, title: p.title, price: p.price, description: p.description, image: p.image, active: p.active, sort_order: p.sort_order, file_path: p.file_path || '', detail: p.detail || '' } : null; drawShop(); }; });
+    $$('[data-d]', root).forEach(function (b) { b.onclick = function () { if (!confirm('이 상품을 삭제할까요? (주문 기록은 남습니다)')) return; CL.delProduct(b.dataset.d).then(function () { toast('삭제했어요.'); shopRows = null; drawShop(); }).catch(function () { toast('삭제하지 못했어요.', true); }); }; });
+    if (f) {
+      $('#shCancel', root).onclick = function () { shopEdit = null; drawShop(); };
+      $('#shSave', root).onclick = function () {
+        var title = $('#shT', root).value.trim(), price = parseInt($('#shP', root).value, 10);
+        if (!title) return toast('상품명을 입력해 주세요.', true);
+        if (!(price >= 100)) return toast('가격은 100원 이상이어야 해요.', true);
+        var rec = { id: f.id, title: title, price: price, description: $('#shD', root).value.trim(), image: $('#shI', root).value.trim(), active: $('#shA', root).checked, sort_order: f.sort_order || 0, file_path: f.file_path || '', detail: $('#shX', root).value };
+        var ef = $('#shB', root).files[0]; if (ef && ef.size > 50 * 1024 * 1024) return toast('전자책 파일은 50MB 이하만 올릴 수 있어요.', true);
+        function save() { CL.saveProduct(rec).then(function () { toast('저장했어요. 메인 화면에 바로 반영됩니다.'); shopEdit = null; shopRows = null; drawShop(); }).catch(function () { toast('저장에 실패했어요.', true); }); }
+        var file = $('#shF', root).files[0];
+        var p1 = file ? compress(file).then(function (r) { return CL.upload(r.dataUrl); }).then(function (u) { rec.image = u; }) : Promise.resolve();
+        toast('저장 중…');
+        p1.then(function () { return ef ? CL.uploadEbook(ef, rec.id).then(function (path) { rec.file_path = path; }) : null; }).then(save).catch(function (e) { toast((e && e.message) || '파일을 올리지 못했어요.', true); });
+      };
+    }
+  }
 
   /* ---------- 문의 통계 (프로그램별 조회·문의 버튼 클릭·카톡·접수) ---------- */
   var statRows = null, statPeriod = 'd30', statErr = '';

@@ -81,6 +81,23 @@
     },
     stats: function () { return call('POST', '/rest/v1/rpc/inquiry_stats', { auth: true, json: {} }); },
 
+
+    /* 상품·결제: 상품 읽기는 누구나(판매중만) / 등록·수정·삭제·주문내역은 관리자 */
+    products: function () { return call('GET', '/rest/v1/products?select=id,title,price,description,detail,image,sort_order&active=eq.true&order=sort_order.asc,created_at.asc'); },
+    allProducts: function () { return call('GET', '/rest/v1/products?select=*&order=sort_order.asc,created_at.asc', { auth: true }); },
+    saveProduct: function (p) { p.updated_at = new Date().toISOString(); return call('POST', '/rest/v1/products?on_conflict=id', { auth: true, json: [p], prefer: 'resolution=merge-duplicates,return=minimal' }); },
+    delProduct: function (id) { return call('DELETE', '/rest/v1/products?id=eq.' + encodeURIComponent(id), { auth: true, prefer: 'return=minimal' }); },
+    orders: function () { return call('GET', '/rest/v1/orders?select=order_id,product_title,amount,status,method,created_at,paid_at&order=created_at.desc&limit=30', { auth: true }); },
+    pay: function (body) {
+      return fetch(URL_ + '/functions/v1/toss-pay', { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+        .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) throw err(j.error || ('HTTP ' + r.status), { status: r.status }); return j; }); });
+    },
+    uploadEbook: function (file, pid) {
+      var ext = (/\.([a-z0-9]{1,6})$/i.exec(file.name) || [0, 'bin'])[1].toLowerCase();
+      var path = String(pid).replace(/[^\w-]/g, '') + '/' + Date.now().toString(36) + '.' + ext;
+      return call('POST', '/storage/v1/object/ebooks/' + path, { auth: true, body: file, type: file.type || 'application/octet-stream' }).then(function () { return path; });
+    },
+
     /* 구독자: 누구나 신청(추가)만 / 보기·삭제는 관리자 */
     addSub: function (rec) {
       return call('POST', '/rest/v1/subscribers', { json: { name: rec.name, phone: rec.phone, email: rec.email }, prefer: 'return=minimal' })

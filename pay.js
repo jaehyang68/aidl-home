@@ -24,14 +24,33 @@
       var im = img(p.image);
       return '<article class="card prod rv in"><div class="pim">' + (im ? '<img src="' + esc(im) + '" alt="' + esc(p.title) + '" loading="lazy">' : '<span class="pph">E-BOOK</span>') + '</div>' +
         '<div class="ptx"><h3>' + esc(p.title) + '</h3>' + (p.description ? '<p>' + esc(p.description) + '</p>' : '') +
-        '<div class="prow"><b class="pprice">' + won(p.price) + '</b><button class="btn primary" type="button" data-buy="' + esc(p.id) + '">구매하기</button></div></div></article>';
+        (p.detail ? '<button class="btn sm ghost" type="button" data-more="' + esc(p.id) + '">자세히 보기</button>' : '') + '<div class="prow"><b class="pprice">' + won(p.price) + '</b><button class="btn primary" type="button" data-buy="' + esc(p.id) + '">구매하기</button></div></div></article>';
     }).join('');
   }
   function loadShop() {
     if (!C || !C.enabled) return;
     C.products().then(function (r) { list = r || []; renderShop(); }).catch(function () {});
   }
+  function rich(t) {   // ## 제목 / - 목록 / > 인용 / 나머지는 문단 (모두 이스케이프 후 변환)
+    var out = [], ul = false;
+    String(t || '').split(/\r?\n/).forEach(function (ln) {
+      var m;
+      if (ul && !/^- /.test(ln)) { out.push('</ul>'); ul = false; }
+      if ((m = /^## (.+)/.exec(ln))) out.push('<h4>' + esc(m[1]) + '</h4>');
+      else if ((m = /^- (.+)/.exec(ln))) { if (!ul) { out.push('<ul>'); ul = true; } out.push('<li>' + esc(m[1]) + '</li>'); }
+      else if ((m = /^> (.+)/.exec(ln))) out.push('<blockquote>' + esc(m[1]) + '</blockquote>');
+      else if (ln.trim()) out.push('<p>' + esc(ln) + '</p>');
+    });
+    if (ul) out.push('</ul>');
+    return out.join('');
+  }
   document.addEventListener('click', function (e) {
+    var mo = e.target.closest && e.target.closest('[data-more]');
+    if (mo) {
+      var q = list.filter(function (x) { return x.id === mo.getAttribute('data-more'); })[0];
+      if (q) { open('<button class="pay-x" type="button" data-x aria-label="닫기">×</button><div class="pay-hd"><h3>' + esc(q.title) + '</h3><div class="pay-amt">' + won(q.price) + '</div></div><div class="pay-detail">' + rich(q.detail) + '</div><button class="btn primary big pay-go" type="button" data-buy="' + esc(q.id) + '">구매하기</button>', 'wide'); }
+      return;
+    }
     var b = e.target.closest && e.target.closest('[data-buy]'); if (!b) return;
     var p = list.filter(function (x) { return x.id === b.getAttribute('data-buy'); })[0]; if (p) openCheckout(p);
   });
@@ -55,7 +74,7 @@
     ov.innerHTML = '<div class="pay-box ' + (cls || '') + '">' + html + '</div>';
     document.body.appendChild(ov); document.body.classList.add('pay-open');
     ov.addEventListener('click', function (e) { if (e.target === ov && !ov.dataset.lock) close(); });
-    var x = ov.querySelector('[data-x]'); if (x) x.onclick = close;
+    [].forEach.call(ov.querySelectorAll('[data-x]'), function (x) { x.onclick = close; });
     return ov;
   }
   function close() { if (ov) { ov.remove(); ov = null; } document.body.classList.remove('pay-open'); widgets = null; cur = null; }
@@ -65,6 +84,7 @@
   function openCheckout(p) {
     open('<button class="pay-x" type="button" data-x aria-label="닫기">×</button>' +
       '<div class="pay-hd"><span class="pay-tag">TEST MODE · 실제 결제 없음</span><h3>' + esc(p.title) + '</h3><div class="pay-amt">' + won(p.price) + '</div></div>' +
+      '<label class="pay-em">다운로드 링크를 받을 이메일<input id="tpEm" type="email" inputmode="email" autocomplete="email" placeholder="example@naver.com" maxlength="120"></label><p class="pay-priv">입력하신 이메일은 다운로드 링크 발송과 주문 확인에만 사용합니다.</p><p class="pay-priv"><b>디지털 상품 안내:</b> 다운로드가 시작된 뒤에는 청약철회(환불)가 제한될 수 있어요. <button type="button" class="pay-lk" data-legal="refund">환불·청약철회 안내</button> · <button type="button" class="pay-lk" data-legal="terms">이용약관</button></p>' +
       '<p class="pay-msg" id="tpMsg">결제창을 불러오는 중…</p><div id="tpPm"></div><div id="tpAg"></div>' +
       '<button class="btn primary big pay-go" type="button" id="tpGo" disabled>결제하기</button>');
     cur = p;
@@ -81,11 +101,13 @@
   }
   function pay() {
     var go = $('#tpGo'), p = cur; if (!p || !widgets) return;
+    var em = ($('#tpEm').value || '').trim();
+    if (!/^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']{2,}$/.test(em)) { $('#tpEm').focus(); $('#tpEm').classList.add('bad'); return; }
     go.disabled = true; go.textContent = '주문 만드는 중…';
-    C.pay({ action: 'order', productId: p.id }).then(function (o) {
+    C.pay({ action: 'order', productId: p.id, buyerEmail: em }).then(function (o) {
       if (Number(o.amount) !== Number(p.price)) { throw new Error('상품 가격이 바뀌었어요. 페이지를 새로고침한 뒤 다시 시도해 주세요.'); }
       var base = location.origin + location.pathname;
-      return widgets.requestPayment({ orderId: o.orderId, orderName: o.orderName, successUrl: base + '?pay=ok', failUrl: base + '?pay=fail' });
+      return widgets.requestPayment({ orderId: o.orderId, orderName: o.orderName, customerEmail: em, successUrl: base + '?pay=ok', failUrl: base + '?pay=fail' });
     }).catch(function (e) {
       if (!$('#tpGo')) return;
       go.disabled = false; go.textContent = '결제하기';
@@ -98,7 +120,10 @@
   function done(o) {
     var box = open('<div class="pay-ok"><div class="pay-chk" aria-hidden="true">✓</div><h3>결제가 완료되었습니다! 감사합니다.</h3>' +
       '<p class="pay-sum"><b>' + esc(o.orderName) + '</b><br>' + won(o.amount) + '</p>' +
-      '<p class="pay-note">테스트 결제라 실제 금액은 청구되지 않았어요.</p><button class="btn primary big" type="button" data-x>확인</button></div>', 'ok');
+      (o.downloadUrl ? '<a class="btn yellow big pay-dl" href="' + esc(o.downloadUrl) + '" rel="noopener">📥 전자책 다운로드</a>' + (o.mailed ? '<p class="pay-note">입력하신 이메일(' + esc(o.email || '') + ')로도 다운로드 링크를 보냈어요. (7일간 유효, 안 보이면 스팸함을 확인해 주세요)</p>' : '<p class="pay-note">다운로드 링크는 이 화면에서만 보여요. 창을 닫기 전에 꼭 저장해 주세요.</p>') : '') +
+      '<p class="pay-note">테스트 결제라 실제 금액은 청구되지 않았어요.</p>' +
+      '<div class="pay-next"><p>🎤 우리 기관·모임에서 직접 들으시려면?</p><a class="btn primary" href="#contact" data-x>강의 문의하기</a>' + (list.length > 1 ? ' <a class="btn ghost" href="#shop" data-x>다른 AI 자료 보기</a>' : '') + '</div>' +
+      '<button class="btn primary big" type="button" data-x>확인</button></div>', 'ok');
     box.dataset.lock = '1';
   }
   function fail(msg) {
