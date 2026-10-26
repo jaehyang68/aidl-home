@@ -21,7 +21,12 @@
     var sec = $('#shop'), grid = $('#shopGrid'); if (!sec || !grid) return;
     sec.hidden = !list.length;
     ['navBuy', 'heroBuy'].forEach(function (id) { var n = document.getElementById(id); if (n) n.hidden = !list.length; });
-    grid.innerHTML = list.map(function (p) {
+    var fab = document.getElementById('buyFab');
+    if (!fab) { fab = document.createElement('a'); fab.id = 'buyFab'; fab.className = 'buy-fab'; fab.href = '#shop'; fab.textContent = '🛒 구매하기'; document.body.appendChild(fab);
+      if (window.IntersectionObserver) new IntersectionObserver(function (en) { fab.classList.toggle('off', en[0].isIntersecting); }, { threshold: 0.1 }).observe(sec); }
+    fab.hidden = !list.length;
+    var ord = list.slice().sort(function (a, b) { return ((b.bundle_of && b.bundle_of.length) ? 1 : 0) - ((a.bundle_of && a.bundle_of.length) ? 1 : 0); });   // 번들을 맨 앞에
+    grid.innerHTML = ord.map(function (p) {
       var im = img(p.image), td = new Date(), today = td.getFullYear() + '-' + ('0' + (td.getMonth() + 1)).slice(-2) + '-' + ('0' + td.getDate()).slice(-2);
       if (p.salePrice == null) p.salePrice = p.price;                            // 특가 가격 원본 보관
       var sold = sales[p.id] || 0, left = p.sale_limit ? Math.max(0, p.sale_limit - sold) : null;
@@ -31,7 +36,8 @@
       var bd = live && p.badge ? '<span class="pbadge">' + esc(p.badge) + '</span>' : '';
       var until = live && (p.sale_until || left !== null) && (p.badge || off) ? '<p class="psale">' + (p.sale_until ? '특가는 ' + esc(String(p.sale_until).slice(5, 7).replace(/^0/, '')) + '월 ' + esc(String(p.sale_until).slice(8, 10).replace(/^0/, '')) + '일까지' : '선착순 특가') + ' · ' + (left !== null ? '남은 특가 ' + left + '명' : '마감 전 조기 종료될 수 있어요') + '</p>' : '';
       var pr = (off ? '<s class="plist">' + won(p.list_price) + '</s> ' : '') + '<b class="pprice">' + won(p.price) + '</b>' + (off ? ' <em class="poff">' + off + '% 할인</em>' : '');
-      return '<article class="card prod rv in"><div class="pim">' + bd + (im ? '<img src="' + esc(im) + '" alt="' + esc(p.title) + '" loading="lazy">' : '<span class="pph">E-BOOK</span>') + '</div>' +
+      var bun = p.bundle_of && p.bundle_of.length;
+      return '<article class="card prod rv in' + (bun ? ' prod-best' : '') + '">' + (bun ? '<span class="pbest">⭐ 추천 · 가장 인기</span>' : '') + '<div class="pim">' + bd + (im ? '<img src="' + esc(im) + '" alt="' + esc(p.title) + '" loading="lazy">' : '<span class="pph">E-BOOK</span>') + '</div>' +
         '<div class="ptx"><h3>' + esc(p.title) + '</h3>' + (p.description ? '<p>' + esc(p.description) + '</p>' : '') +
         (p.detail ? '<button class="btn sm ghost" type="button" data-more="' + esc(p.id) + '">자세히 보기</button>' : '') + '' + until + '<div class="prow"><span class="pwrap">' + pr + '</span><button class="btn primary" type="button" data-buy="' + esc(p.id) + '">구매하기</button></div></div></article>';
     }).join('');
