@@ -171,6 +171,21 @@
     var ic = (CATS[p.category] || CATS.cus).icon;
     return '<a class="pthumb tile t-' + esc(p.category) + '" href="' + href + '" tabindex="-1" aria-hidden="true"><svg class="i"><use href="#' + esc(p.icon || ic) + '"/></svg><b>' + esc(p.title) + '</b></a>';
   }
+  /* ---------- 강의안 PDF 보기 / PPT 받기 버튼 (assets/decks/) ---------- */
+  var DECKS = {
+    'AI 업무혁신 MASTER': '01_AI_Work_Innovation_MASTER', 'AI CONTENT STUDIO': '02_AI_CONTENT_STUDIO', 'AI MOVIE STUDIO': '03_AI_MOVIE_STUDIO',
+    '공공기관 AI 업무혁신': '04_Public_Agency_AI', '농업인 AI 스마트마케팅': '05_Farmer_AI_Marketing', '교직원 생성형 AI': '06_Teacher_GenAI',
+    '소상공인 AI 콘텐츠 마케팅': '07_SmallBiz_AI_Content', '바이브코딩 웹앱 실전교육': '08_VibeCoding_WebApp', 'AI 책쓰기·책출판': '09_AI_Book_Writing',
+    'AI 자격증 과정': '10_AI_Certificate_Course'
+  };
+  var EYE = '<svg class="i" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+  var DLI = '<svg class="i" viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>';
+  function deckRow(title) {
+    var k = DECKS[title]; if (!k) return '';
+    return '<div class="dk-row"><button type="button" class="dk-btn dk-view" data-pdf="assets/decks/pdf/' + k + '.pdf" data-title="' + esc(title) + ' 강의안">' + EYE + '강의안 보기</button>' +
+      '<a class="dk-btn dk-dl" href="assets/decks/pptx/' + k + '.pptx" download>' + DLI + 'PPT 받기</a></div>' +
+      (k.indexOf('10_') === 0 ? '<a class="dk-link" href="#certs">5개 트랙 · 수료증·자격증 샘플 보기 →</a>' : '');
+  }
   function card(p) {
     var c = CATS[p.category] || CATS.cus, href = '#/program/' + encodeURIComponent(p.id);
     var rows = '<dt>대상</dt><dd>' + esc(p.target || '-') + '</dd>';
@@ -179,7 +194,7 @@
     return '<article class="card hov prog' + (p.category === 'sig' ? ' sig' : '') + '" data-g="' + esc(p.category) + '" data-id="' + esc(p.id) + '">' +
       thumb(p) +
       '<div class="top"><span class="ic"><svg class="i"><use href="#' + esc(p.icon || c.icon) + '"/></svg></span><span class="tag' + (p.category === 'cus' ? ' b' : (p.category === 'pub' || p.category === 'cert' || p.category === 'free') ? ' g' : '') + '">' + esc(c.tag) + '</span></div>' +
-      '<h3><a href="' + href + '">' + esc(p.title) + '</a></h3><p class="one">' + esc(p.summary) + '</p><dl>' + rows + '</dl>' +
+      '<h3><a href="' + href + '">' + esc(p.title) + '</a></h3><p class="one">' + esc(p.summary) + '</p><dl>' + rows + '</dl>' + deckRow(p.title) +
       '<div class="pbtns"><a class="btn sm" href="' + href + '">자세히 보기</a><button class="btn sm primary" type="button" data-course="' + esc(p.course || p.title) + '">문의하기</button></div></article>';
   }
   function render() {
