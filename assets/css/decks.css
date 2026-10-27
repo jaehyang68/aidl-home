@@ -1,0 +1,50 @@
+/* 강의안 보기/받기 버튼 + 모달 + 자격과정 섹션 (decks.css) */
+.dk-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.dk-btn{position:relative;overflow:hidden;isolation:isolate;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 10px;border:2px solid var(--bd);border-radius:12px;font-weight:800;font-size:14.5px;line-height:1.2;cursor:pointer;
+  box-shadow:3px 3px 0 var(--bd);transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s,background-position .5s,color .2s;text-decoration:none;white-space:nowrap}
+.dk-btn .i{transition:transform .25s}
+.dk-btn::after{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;z-index:-1;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.65),transparent);transform:skewX(-20deg);transition:left .55s}
+.dk-btn:hover::after,.dk-btn:focus-visible::after{left:130%}
+.dk-btn:hover,.dk-btn:focus-visible{transform:translate(-3px,-3px) scale(1.03);box-shadow:7px 7px 0 var(--bd),0 0 22px rgba(37,99,235,.45)}
+.dk-btn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--bd)}
+.dk-view{background:linear-gradient(120deg,#2563EB,#7C3AED 55%,#2563EB);background-size:200% 100%;color:#fff}
+.dk-view:hover,.dk-view:focus-visible{background-position:100% 0}
+.dk-view:hover .i,.dk-view:focus-visible .i{transform:scale(1.25) rotate(-6deg)}
+.dk-dl{background:linear-gradient(120deg,#FFE17C,#FFC83D 55%,#FFE17C);background-size:200% 100%;color:#0F172A}
+.dk-dl:hover,.dk-dl:focus-visible{background-position:100% 0;box-shadow:7px 7px 0 var(--bd),0 0 22px rgba(255,200,61,.65)}
+.dk-dl:hover .i,.dk-dl:focus-visible .i{transform:translateY(3px)}
+.dk-note{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5}
+.dk-link{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-weight:800;color:var(--cobalt);font-size:14px}
+.dk-link:hover{text-decoration:underline}
+
+/* 자격과정 */
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:24px}
+.cc{background:#fff;border:2px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:22px;display:flex;flex-direction:column;gap:12px;transition:transform .22s,box-shadow .22s}
+.cc:hover{transform:translate(-3px,-3px);box-shadow:8px 8px 0 var(--bd)}
+.cc .tg{align-self:flex-start;font-size:12px;font-weight:800;letter-spacing:.1em;background:var(--highlight);border:2px solid var(--bd);border-radius:999px;padding:2px 12px}
+.cc h3{font-size:21px;line-height:1.3}
+.cc p{color:var(--muted);font-size:15px}
+.cc .th{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cc .th button{all:unset;cursor:zoom-in;display:block;position:relative;border:2px solid var(--bd);border-radius:10px;overflow:hidden;background:#fff;transition:transform .22s,box-shadow .22s}
+.cc .th button:hover,.cc .th button:focus-visible{transform:scale(1.04) rotate(-.6deg);box-shadow:0 8px 20px rgba(15,23,42,.28)}
+.cc .th img{width:100%;height:auto;aspect-ratio:297/210;object-fit:cover}
+.cc .th span{position:absolute;left:0;bottom:0;right:0;background:rgba(15,23,42,.82);color:#fff;font-size:12px;font-weight:800;text-align:center;padding:3px}
+.cn{margin-top:28px;border:2px dashed var(--bd);border-radius:var(--r);background:#fff;padding:16px 20px;font-size:14px;color:var(--muted)}
+.cn b{color:var(--ink)}
+
+/* 모달 */
+.dkm{position:fixed;inset:0;z-index:9999;display:none;background:rgba(15,23,42,.78);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:clamp(8px,2vw,24px)}
+.dkm.on{display:flex;animation:dkf .2s}
+@keyframes dkf{from{opacity:0}to{opacity:1}}
+.dkm-box{width:min(1180px,100%);height:min(88vh,100%);background:#fff;border:3px solid #fff;border-radius:14px;display:flex;flex-direction:column;overflow:hidden}
+.dkm-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--navy);color:#fff}
+.dkm-bar b{flex:1;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dkm-bar a,.dkm-bar button{border:2px solid #fff;background:transparent;color:#fff;border-radius:10px;padding:6px 12px;font-weight:800;font-size:13px;cursor:pointer;text-decoration:none;transition:background .2s,color .2s}
+.dkm-bar a:hover,.dkm-bar button:hover{background:#fff;color:var(--navy)}
+.dkm iframe{flex:1;width:100%;border:0;background:#444}
+.dkm img.dkm-img{max-width:100%;max-height:calc(88vh - 56px);margin:auto;display:block;object-fit:contain;background:#fff}
+.dkm-box.imgbox{background:#222;align-items:center}
+@media (max-width:480px){.dk-row{grid-template-columns:1fr}.dk-btn{font-size:15px;padding:13px}}
+@media (prefers-reduced-motion:reduce){.dk-btn,.dk-btn::after,.cc,.cc .th button{transition:none}.dk-btn:hover{transform:none}}
