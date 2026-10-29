@@ -11,14 +11,16 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="배우는 AI에서, 해내는 AI로 | 인공지능디지털연구소 최재향">
 <meta property="og:description" content="교육이 끝나면 결과물이 남습니다. 공공기관·기업·학교 맞춤 AI 실습 강의 문의.">
-<meta property="og:image" content="assets/img/hero-poster.jpg">
+<meta property="og:url" content="https://aidl.ai.kr/">
+<meta property="og:image" content="https://aidl.ai.kr/assets/img/hero-poster.jpg">
+<link rel="canonical" href="https://aidl.ai.kr/">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="assets/css/style.css">
 <link rel="stylesheet" href="assets/css/decks.css">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
-{"@type":"Organization","name":"인공지능디지털연구소(AIDL)","url":"https://aidl.kr","logo":"assets/img/logo.png","email":"80284@naver.com","telephone":"+82-10-3420-2083","founder":{"@type":"Person","name":"최재향"}},
+{"@type":"Organization","name":"인공지능디지털연구소(AIDL)","url":"https://aidl.ai.kr/","logo":"https://aidl.ai.kr/assets/img/logo.png","email":"80284@naver.com","telephone":"+82-10-3420-2083","founder":{"@type":"Person","name":"최재향"}},
 {"@type":"Person","name":"최재향","jobTitle":"인공지능디지털연구소 대표 · AI 강사 · AI 영화감독","worksFor":{"@type":"Organization","name":"인공지능디지털연구소(AIDL)"},"sameAs":["https://blog.naver.com/80284","https://litt.ly/jaehyang"]}
 ]}
 </script>
@@ -74,6 +76,7 @@
     <nav class="nav" id="nav" aria-label="주요 메뉴">
       <a href="#home" data-s="home">HOME</a>
       <a href="#shop" data-s="shop" class="nav-buy" id="navBuy" hidden>🛒 구매하기</a>
+      <a href="#yeosu7" data-s="yeosu7">7시간 강의자료</a>
       <a href="#programs" data-s="programs">교육과정</a>
       <a href="#certs" data-s="certs">자격과정</a>
       <a href="#reviews" data-s="reviews">후기</a>
@@ -227,6 +230,122 @@
 </section>
 
 <!-- ======================== 프로그램 ======================== -->
+<!-- ===== FEATURED: 직장인 AI 7시간 원데이 강의자료 (yeosu7) ===== -->
+<style>
+.yf{--yb:var(--bd,#0F172A);position:relative;overflow:hidden;background:linear-gradient(135deg,#0A1330 0%,#14275F 55%,#1F3F95 120%);color:#fff;border:3px solid var(--yb);border-radius:24px;box-shadow:8px 8px 0 var(--yb);padding:clamp(22px,4vw,44px)}
+.yf::before{content:"";position:absolute;right:-90px;top:-90px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(255,200,61,.30),transparent 70%);pointer-events:none}
+.yf-top{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:14px}
+.yf-badge{display:inline-flex;align-items:center;gap:7px;background:#FFC83D;color:#0F172A;border:2px solid #fff;border-radius:999px;padding:4px 14px;font-weight:900;font-size:13px;letter-spacing:.08em;animation:yfp 2.2s ease-in-out infinite}
+.yf-badge i{width:8px;height:8px;border-radius:50%;background:#E11D48;display:inline-block}
+@keyframes yfp{0%,100%{box-shadow:0 0 0 0 rgba(255,200,61,.65)}50%{box-shadow:0 0 0 10px rgba(255,200,61,0)}}
+.yf-eye{font-weight:800;letter-spacing:.14em;font-size:13px;color:#F5D77E}
+.yf h2{font-size:clamp(26px,4.4vw,44px);line-height:1.25;font-weight:900;letter-spacing:-.01em}
+.yf h2 em{font-style:normal;color:#FFC83D}
+.yf-lead{margin-top:12px;color:#DCE4FA;font-size:clamp(15px,1.8vw,18px);max-width:760px;line-height:1.65}
+.yf-chips{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 6px}
+.yf-chips span{border:1.5px solid rgba(255,255,255,.55);border-radius:999px;padding:5px 14px;font-weight:800;font-size:13.5px;background:rgba(255,255,255,.08)}
+.yf-time{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:22px 0 26px}
+.yf-time div{background:rgba(255,255,255,.09);border:1.5px solid rgba(255,255,255,.25);border-radius:12px;padding:9px 6px;text-align:center;font-size:12.5px;line-height:1.35;transition:transform .2s,background .2s,border-color .2s}
+.yf-time div:hover{transform:translateY(-4px);background:rgba(255,200,61,.20);border-color:#FFC83D}
+.yf-time b{display:block;color:#FFC83D;font-size:12px;letter-spacing:.06em}
+.yf-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.yf-card{background:#fff;color:#0F172A;border:3px solid var(--yb);border-radius:18px;box-shadow:6px 6px 0 #000;padding:20px;display:flex;gap:18px;flex-direction:column;align-items:stretch;transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s}
+.yf-card:hover{transform:translate(-4px,-4px);box-shadow:11px 11px 0 #000}
+.yf-th{flex:none;width:100%;height:200px;display:block;border:2px solid var(--yb);border-radius:10px;overflow:hidden;background:#0A1330;position:relative;padding:0;cursor:pointer;transition:transform .25s}
+.yf-th:hover{transform:scale(1.05) rotate(-1deg)}
+.yf-th img{display:block;height:100%;width:100%;object-fit:cover;object-position:center top}
+.yf-th span{position:absolute;left:0;right:0;bottom:0;background:rgba(15,23,42,.85);color:#fff;font-size:11.5px;font-weight:800;text-align:center;padding:3px}
+.yf-card h3{font-size:20px;line-height:1.3;font-weight:900}
+.yf-card p{color:#475569;font-size:14px;margin:6px 0 14px;line-height:1.55}
+.yf-card:last-child .yf-th img{object-fit:contain}.yf-body{flex:1;min-width:0;display:flex;flex-direction:column}.yf-row{margin-top:auto}
+.yf-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.yf-btn{position:relative;overflow:hidden;isolation:isolate;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 8px;border:2px solid var(--yb);border-radius:12px;font:inherit;font-weight:900;font-size:14.5px;line-height:1.2;cursor:pointer;text-decoration:none;white-space:nowrap;box-shadow:3px 3px 0 var(--yb);transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s,background-position .5s}
+.yf-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s}
+.yf-btn::after{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;z-index:-1;background:linear-gradient(100deg,transparent,rgba(255,255,255,.7),transparent);transform:skewX(-20deg);transition:left .55s}
+.yf-btn:hover::after,.yf-btn:focus-visible::after{left:130%}
+.yf-btn:hover,.yf-btn:focus-visible{transform:translate(-3px,-3px) scale(1.04);box-shadow:7px 7px 0 var(--yb),0 0 24px rgba(37,99,235,.5)}
+.yf-btn:active{transform:translate(2px,2px);box-shadow:none}
+.yf-view{background:linear-gradient(120deg,#2563EB,#7C3AED 55%,#2563EB);background-size:200% 100%;color:#fff}
+.yf-view:hover,.yf-view:focus-visible{background-position:100% 0}
+.yf-view:hover svg{transform:scale(1.25) rotate(-6deg)}
+.yf-dl{background:linear-gradient(120deg,#FFE17C,#FFC83D 55%,#FFE17C);background-size:200% 100%;color:#0F172A}
+.yf-dl:hover,.yf-dl:focus-visible{background-position:100% 0;box-shadow:7px 7px 0 var(--yb),0 0 24px rgba(255,200,61,.8)}
+.yf-dl:hover svg{transform:translateY(3px)}
+.yf-sub{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-weight:800;font-size:13.5px;color:#2563EB;text-decoration:none;border-bottom:2px solid transparent;transition:border-color .2s,transform .2s}
+.yf-sub:hover{border-color:#2563EB;transform:translateX(3px)}
+.yf-note{margin-top:20px;font-size:13px;color:#B9C6EE;line-height:1.6}
+.yf-note b{color:#F5D77E}
+.yf-cta{margin-top:18px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+@media (max-width:900px){.yf-grid{grid-template-columns:1fr}.yf-time{grid-template-columns:repeat(4,1fr)}}
+@media (max-width:520px){.yf{border-radius:18px;box-shadow:5px 5px 0 var(--yb)}.yf-th{height:170px}.yf-row{grid-template-columns:1fr}.yf-time{grid-template-columns:repeat(2,1fr)}.yf-btn{font-size:15.5px;padding:14px}}
+@media (prefers-reduced-motion:reduce){.yf-badge{animation:none}.yf-btn,.yf-btn::after,.yf-card,.yf-th,.yf-time div{transition:none}.yf-btn:hover,.yf-card:hover,.yf-th:hover{transform:none}}
+.yfm{position:fixed;inset:0;z-index:10000;display:none;background:rgba(15,23,42,.8);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:clamp(8px,2vw,24px)}
+.yfm.on{display:flex}
+.yfm-box{width:min(1200px,100%);height:min(90vh,100%);background:#fff;border:3px solid #fff;border-radius:14px;display:flex;flex-direction:column;overflow:hidden}
+.yfm-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#0A1330;color:#fff}
+.yfm-bar b{flex:1;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.yfm-bar a,.yfm-bar button{border:2px solid #fff;background:transparent;color:#fff;border-radius:10px;padding:6px 12px;font:inherit;font-weight:800;font-size:13px;cursor:pointer;text-decoration:none}
+.yfm-bar a:hover,.yfm-bar button:hover{background:#fff;color:#0A1330}
+.yfm iframe{flex:1;width:100%;border:0;background:#444}
+</style>
+<section class="sec" id="yeosu7" aria-labelledby="yfT">
+  <div class="wrap">
+    <div class="yf rv">
+      <div class="yf-top"><span class="yf-badge"><i></i>NEW · 핵심 강의자료</span><span class="yf-eye">ONE-DAY WORKSHOP · 7 HOURS</span></div>
+      <h2 id="yfT">직장인 <em>AI 업무효율화</em><br>원데이 7시간 강의자료</h2>
+      <p class="yf-lead">신입사원 ‘아델’을 하루 만에 에이스로 키우는 7교시 실습 과정. 지시 → 검수 → 저장, 세 가지 습관으로 <b>보고서·회의록·데이터 분석·홍보물·웹앱</b>까지 내 업무 결과물을 직접 완성합니다.</p>
+      <div class="yf-chips"><span>7시간 · 7교시</span><span>슬라이드 79장</span><span>실습 워크북 23쪽</span><span>100% 무료 AI 도구</span><span>실습 데이터 포함</span></div>
+      <div class="yf-time" aria-label="교시별 구성">
+        <div><b>1교시</b>AI 시간여행<br>입사식</div><div><b>2교시</b>업무지시서<br>프롬프트</div><div><b>3교시</b>문서 3종<br>메일·공지·보고</div><div><b>4교시</b>요약·회의록</div><div><b>5교시</b>이상값 헌터<br>데이터 분석</div><div><b>6교시</b>홍보팀 되기<br>카드뉴스</div><div><b>7교시</b>내 앱·내 비서<br>졸업</div>
+      </div>
+      <div class="yf-grid">
+        <article class="yf-card">
+          <button type="button" class="yf-th" data-yf-pdf="assets/yeosu/yeosu-ai-7h-lecture.pdf" data-yf-title="직장인 AI 업무효율화 7시간 강의자료" aria-label="강의자료 미리보기"><img src="assets/yeosu/thumb-lecture.jpg" alt="직장인 AI 업무효율화 강의자료 표지" loading="lazy" width="672" height="378"><span>표지 · 클릭하면 열려요</span></button>
+          <div class="yf-body"><h3>강의자료 · 슬라이드 79장</h3><p>1교시 입사식부터 7교시 졸업까지, 교시별 실습 프롬프트가 담긴 전체 강의 슬라이드입니다.</p>
+            <div class="yf-row">
+              <a class="yf-btn yf-view" href="assets/yeosu/yeosu-ai-7h-lecture.pdf" target="_blank" rel="noopener" data-yf-pdf="assets/yeosu/yeosu-ai-7h-lecture.pdf" data-yf-title="직장인 AI 업무효율화 7시간 강의자료"><svg viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>PDF 바로보기</a>
+              <a class="yf-btn yf-dl" href="assets/yeosu/yeosu-ai-7h-lecture.pptx" download="직장인_AI_업무효율화_7시간_강의자료.pptx"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>PPT 다운로드</a>
+            </div></div>
+        </article>
+        <article class="yf-card">
+          <button type="button" class="yf-th" data-yf-pdf="assets/yeosu/yeosu-ai-7h-workbook.pdf" data-yf-title="직장인 AI 업무효율화 실습 워크북" aria-label="실습 워크북 미리보기"><img src="assets/yeosu/thumb-workbook.jpg" alt="실습 워크북 표지" loading="lazy" width="496" height="702"><span>표지 · 클릭하면 열려요</span></button>
+          <div class="yf-body"><h3>실습 워크북 · 23쪽</h3><p>복사해서 붙여넣고, 확인하고, 내 것으로 저장하세요. 교육생이 직접 쓰는 실습용 워크북입니다.</p>
+            <div class="yf-row">
+              <a class="yf-btn yf-view" href="assets/yeosu/yeosu-ai-7h-workbook.pdf" target="_blank" rel="noopener" data-yf-pdf="assets/yeosu/yeosu-ai-7h-workbook.pdf" data-yf-title="직장인 AI 업무효율화 실습 워크북"><svg viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>워크북 바로보기</a>
+              <a class="yf-btn yf-dl" href="assets/yeosu/yeosu-ai-7h-workbook.pdf" download="직장인_AI_업무효율화_실습워크북.pdf"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>워크북 다운로드</a>
+            </div>
+            <a class="yf-sub" href="assets/yeosu/yeosu-practice-sales-data.csv" download="5교시_실습_매출데이터.csv">5교시 실습 데이터(CSV) 받기 →</a></div>
+        </article>
+      </div>
+      <p class="yf-note"><b>안내</b> 모든 실습은 무료 AI 도구(ChatGPT·Gemini·구글 슬라이드)로 진행합니다. 무료 한도와 도구 정책은 수시로 바뀔 수 있어요. 실습에는 개인정보·회사 기밀을 넣지 마세요.</p>
+      <div class="yf-cta"><a class="btn yellow" href="#contact" data-course="직장인 AI 업무효율화 원데이 7시간">이 강의로 문의하기 <svg class="i"><use href="#i-arrow"/></svg></a></div>
+    </div>
+  </div>
+</section>
+<script>
+(function(){
+  var m=document.createElement('div');m.className='yfm';m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');
+  m.innerHTML='<div class="yfm-box"><div class="yfm-bar"><b id="yfmT"></b><a id="yfmO" target="_blank" rel="noopener">새 탭에서 열기</a><button type="button" id="yfmX">닫기 ✕</button></div><iframe id="yfmF" title="문서 보기"></iframe></div>';
+  document.body.appendChild(m);
+  var f=m.querySelector('#yfmF'),T=m.querySelector('#yfmT'),O=m.querySelector('#yfmO'),last=null;
+  function close(){m.classList.remove('on');f.removeAttribute('src');document.body.style.overflow='';if(last&&last.focus)last.focus()}
+  m.querySelector('#yfmX').onclick=close;
+  m.addEventListener('click',function(e){if(e.target===m)close()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&m.classList.contains('on'))close()});
+  var mobile=function(){return window.innerWidth<760||/iPad|iPhone|iPod|Android/.test(navigator.userAgent)};
+  document.querySelectorAll('[data-yf-pdf]').forEach(function(el){
+    el.addEventListener('click',function(e){
+      var u=el.getAttribute('data-yf-pdf');
+      if(mobile()){ if(el.tagName==='A')return; window.open(u,'_blank','noopener'); e.preventDefault(); return; }
+      e.preventDefault();last=el;
+      T.textContent=el.getAttribute('data-yf-title')||'';O.href=u;f.src=u+'#view=FitH';
+      m.classList.add('on');document.body.style.overflow='hidden';
+    });
+  });
+})();
+</script>
+<!-- ===== /yeosu7 ===== -->
+
 <section class="sec" id="programs" aria-labelledby="progT">
   <div class="wrap">
     <div class="sec-head rv"><span class="eyebrow">AI EDUCATION</span><h2 class="h2" id="progT">AI 교육 프로그램</h2><p class="lead">시그니처 3과정을 기본으로, 기관·대상·시간에 맞춰 커리큘럼을 맞춤 설계합니다. 반나절 특강부터 종일 실습까지 일정에 맞춰 조정합니다.</p></div>
